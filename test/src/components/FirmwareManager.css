@@ -1,0 +1,319 @@
+.firmware-manager-container {
+  padding: calc(30px + 1.5vw) calc(15px + 1vw);
+  max-width: calc(800px + 10vw);
+  margin: 0 auto;
+}
+
+.firmware-manager-container header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: calc(25px + 1vw);
+}
+
+.firmware-manager-container h1 {
+  color: #7b1fa2;
+  margin: 0;
+  font-size: calc(1.8rem + 1vw);
+}
+
+.firmware-manager-container h2 {
+  color: #333;
+  font-size: calc(1.2rem + 0.5vw);
+  margin: calc(20px + 1vw) 0 calc(12px + 0.5vw);
+}
+
+.header-actions {
+  display: flex;
+  gap: calc(10px + 0.5vw);
+  align-items: center;
+}
+
+.admin-button {
+  background-color: #7b1fa2;
+  color: white;
+  text-decoration: none;
+  padding: calc(8px + 0.5vw) calc(15px + 0.8vw);
+  border-radius: calc(8px + 0.3vw);
+  font-weight: 500;
+  font-size: calc(0.9rem + 0.2vw);
+  transition: all 0.3s ease;
+}
+
+.admin-button:hover {
+  background-color: #6a1b9a;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(123, 31, 162, 0.3);
+}
+
+.current-release {
+  background: linear-gradient(135deg, #7b1fa2 0%, #6a1b9a 100%);
+  color: white;
+  padding: calc(15px + 1vw);
+  border-radius: calc(12px + 0.3vw);
+  margin-bottom: calc(25px + 1vw);
+  box-shadow: 0 4px 15px rgba(123, 31, 162, 0.3);
+}
+
+.current-release h2 {
+  color: white;
+  margin: 0;
+  font-size: calc(1.4rem + 0.5vw);
+}
+
+.current-release p {
+  margin: calc(8px + 0.5vw) 0 0;
+  font-size: calc(1rem + 0.2vw);
+  opacity: 0.9;
+}
+
+.info-box {
+  background-color: #e3f2fd;
+  padding: calc(15px + 1vw);
+  border-radius: calc(10px + 0.3vw);
+  margin-bottom: calc(25px + 1vw);
+  border-left: 5px solid #2196f3;
+}
+
+.info-box p {
+  margin: 0 0 calc(8px + 0.5vw);
+  line-height: 1.5;
+  font-size: calc(0.9rem + 0.2vw);
+}
+
+.info-box p:last-child {
+  margin-bottom: 0;
+}
+
+.select-device-section,
+.os-downloads-section,
+.installation-tools-section {
+  background-color: #fff;
+  padding: calc(20px + 1vw);
+  border-radius: calc(12px + 0.3vw);
+  margin-bottom: calc(25px + 1vw);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid #eee;
+}
+
+.select-device-section h2,
+.os-downloads-section h2,
+.installation-tools-section h2 {
+  color: #333;
+  border-bottom: 2px solid #eee;
+  padding-bottom: calc(8px + 0.5vw);
+  margin-top: 0;
+  font-size: calc(1.3rem + 0.5vw);
+}
+
+.form-group {
+  margin-bottom: calc(15px + 1vw);
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: calc(6px + 0.3vw);
+  font-weight: 600;
+  font-size: calc(0.9rem + 0.2vw);
+}
+
+.form-group select {
+  width: 100%;
+  padding: calc(10px + 0.5vw);
+  border: 1px solid #ddd;
+  border-radius: calc(6px + 0.2vw);
+  font-size: calc(0.9rem + 0.2vw);
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007CB2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+  background-repeat: no-repeat;
+  background-position: right calc(12px + 0.5vw) top 50%;
+  background-size: calc(12px + 0.3vw) auto;
+  cursor: pointer;
+}
+
+.form-group select:focus {
+  border-color: #7b1fa2;
+  box-shadow: 0 0 0 2px rgba(123, 31, 162, 0.2);
+  outline: none;
+}
+
+.firmware-list {
+  margin-top: calc(20px + 1vw);
+}
+
+.firmware-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: calc(15px + 1vw);
+  background-color: #f9f9f9;
+  border-radius: calc(8px + 0.3vw);
+  margin-bottom: calc(12px + 0.5vw);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.firmware-item:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.firmware-info {
+  display: flex;
+  flex-direction: column;
+  gap: calc(6px + 0.3vw);
+}
+
+.firmware-version {
+  font-weight: bold;
+  font-size: calc(1rem + 0.2vw);
+  margin-bottom: calc(6px + 0.3vw);
+  color: #333;
+}
+
+.firmware-date {
+  color: #666;
+  font-size: calc(0.9rem + 0.1vw);
+}
+
+.download-button,
+.toolkit-download-button {
+  background-color: #2196f3;
+  color: white;
+  border: none;
+  padding: calc(8px + 0.5vw) calc(15px + 0.8vw);
+  border-radius: calc(6px + 0.2vw);
+  cursor: pointer;
+  text-decoration: none;
+  font-weight: bold;
+  display: inline-flex;
+  align-items: center;
+  gap: calc(6px + 0.2vw);
+  font-size: calc(0.9rem + 0.2vw);
+  transition: all 0.3s ease;
+}
+
+.download-button:before {
+  content: "↓";
+  font-size: calc(1.2rem + 0.2vw);
+}
+
+.download-button:hover,
+.toolkit-download-button:hover {
+  background-color: #1976d2;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+}
+
+.toolkit-download-button {
+  background-color: #7b1fa2;
+  padding: calc(10px + 0.5vw) calc(20px + 1vw);
+  font-size: calc(1rem + 0.2vw);
+  margin-top: calc(8px + 0.5vw);
+}
+
+.toolkit-download-button:hover {
+  background-color: #6a1b9a;
+  box-shadow: 0 4px 12px rgba(123, 31, 162, 0.3);
+}
+
+.toolkit-info {
+  background-color: #f3e5f5;
+  padding: calc(12px + 0.8vw);
+  border-radius: calc(8px + 0.3vw);
+  margin-bottom: calc(15px + 1vw);
+  border-left: 4px solid #7b1fa2;
+}
+
+.toolkit-info h3 {
+  color: #7b1fa2;
+  margin-top: 0;
+  margin-bottom: calc(8px + 0.5vw);
+  font-size: calc(1.1rem + 0.2vw);
+}
+
+.device-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: calc(12px + 0.8vw);
+  margin-top: calc(15px + 1vw);
+}
+
+.device-info-item {
+  background-color: #f5f5f5;
+  padding: calc(12px + 0.8vw);
+  border-radius: calc(8px + 0.3vw);
+}
+
+.device-info-label {
+  font-weight: bold;
+  color: #333;
+  display: block;
+  margin-bottom: calc(4px + 0.2vw);
+  font-size: calc(0.9rem + 0.1vw);
+}
+
+.device-info-value {
+  color: #666;
+  font-size: calc(1rem + 0.2vw);
+}
+
+.loading {
+  text-align: center;
+  padding: calc(15px + 1vw);
+  color: #666;
+  font-size: calc(1rem + 0.2vw);
+}
+
+.error-message {
+  background-color: #ffebee;
+  color: #c62828;
+  padding: calc(12px + 0.8vw);
+  border-radius: calc(8px + 0.3vw);
+  margin-bottom: calc(15px + 1vw);
+  border-left: 4px solid #c62828;
+  font-size: calc(0.9rem + 0.2vw);
+}
+
+.back-link {
+  color: #7b1fa2;
+  text-decoration: none;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: calc(5px + 0.2vw);
+  font-size: calc(0.9rem + 0.2vw);
+}
+
+.back-link:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .firmware-manager-container {
+    padding: calc(15px + 1vw) calc(10px + 0.8vw);
+  }
+
+  .firmware-manager-container h1 {
+    font-size: calc(1.5rem + 0.8vw);
+  }
+
+  .device-info {
+    grid-template-columns: 1fr;
+  }
+
+  .firmware-item {
+    flex-direction: column;
+    gap: calc(12px + 0.8vw);
+    text-align: center;
+  }
+
+  .firmware-info {
+    align-items: center;
+  }
+
+  .download-button {
+    width: 100%;
+    justify-content: center;
+  }
+} 

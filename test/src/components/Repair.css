@@ -1,0 +1,122 @@
+.repair-container {
+  max-width: calc(1200px + 10vw);
+  margin: calc(20px + 1vw) auto;
+  padding: calc(20px + 1vw);
+  background-color: #ffffff;
+  border-radius: calc(8px + 0.3vw);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.repair-container h2 {
+  text-align: center;
+  color: #333;
+  margin-bottom: calc(20px + 1vw);
+  font-size: calc(1.5rem + 1vw);
+}
+
+.repair-content {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: calc(20px + 1vw);
+}
+
+.repair-section {
+  padding: calc(10px + 0.5vw);
+}
+
+.repair-section h3 {
+  color: #333;
+  margin-bottom: calc(10px + 0.5vw);
+  font-size: calc(1.2rem + 0.5vw);
+}
+
+.repair-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: calc(20px + 1vw);
+  margin-top: calc(20px + 1vw);
+}
+
+.repair-option {
+  background-color: #f8f9fa;
+  padding: calc(15px + 0.8vw);
+  border-radius: calc(8px + 0.3vw);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.repair-option h4 {
+  color: #333;
+  margin-bottom: calc(10px + 0.5vw);
+  font-size: calc(1.1rem + 0.3vw);
+}
+
+.repair-option ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.repair-option li {
+  margin: calc(5px + 0.3vw) 0;
+  color: #666;
+  padding-left: calc(15px + 0.8vw);
+  position: relative;
+  font-size: calc(0.9rem + 0.2vw);
+}
+
+.repair-option li:before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: #007bff;
+}
+
+.repair-contact {
+  background-color: #f8f9fa;
+  padding: calc(20px + 1vw);
+  border-radius: calc(8px + 0.3vw);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.repair-contact h3 {
+  color: #333;
+  margin-bottom: calc(10px + 0.5vw);
+  font-size: calc(1.2rem + 0.5vw);
+}
+
+.contact-info {
+  margin: calc(15px + 0.8vw) 0;
+}
+
+.contact-info p {
+  margin: calc(5px + 0.3vw) 0;
+  color: #666;
+  font-size: calc(0.9rem + 0.2vw);
+}
+
+.schedule-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: calc(8px + 0.5vw) calc(15px + 0.8vw);
+  border-radius: calc(4px + 0.2vw);
+  cursor: pointer;
+  font-size: calc(1rem + 0.2vw);
+  width: 100%;
+  transition: background-color 0.2s;
+}
+
+.schedule-button:hover {
+  background-color: #0056b3;
+}
+
+@media (max-width: 768px) {
+  .repair-content {
+    grid-template-columns: 1fr;
+    gap: calc(15px + 0.8vw);
+  }
+  
+  .repair-options {
+    grid-template-columns: 1fr;
+    gap: calc(15px + 0.8vw);
+  }
+} 

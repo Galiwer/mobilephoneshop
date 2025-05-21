@@ -1,0 +1,112 @@
+.firmware-container {
+  max-width: calc(800px + 10vw);
+  margin: calc(20px + 1vw) auto;
+  padding: calc(20px + 1vw);
+  background-color: #ffffff;
+  border-radius: calc(8px + 0.3vw);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.firmware-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: calc(20px + 1vw);
+}
+
+.firmware-header h2 {
+  margin: 0;
+  color: #333;
+  font-size: calc(1.5rem + 0.5vw);
+}
+
+.manage-firmware-button {
+  background-color: #7b1fa2;
+  color: white;
+  text-decoration: none;
+  padding: calc(8px + 0.5vw) calc(15px + 0.8vw);
+  border-radius: calc(8px + 0.3vw);
+  font-weight: 500;
+  font-size: calc(0.9rem + 0.2vw);
+  transition: all 0.3s ease;
+}
+
+.manage-firmware-button:hover {
+  background-color: #6a1b9a;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(123, 31, 162, 0.3);
+}
+
+.firmware-upload-section {
+  margin: calc(20px + 1vw) 0;
+  padding: calc(15px + 0.8vw);
+  border: 2px dashed #ccc;
+  border-radius: calc(4px + 0.2vw);
+  text-align: center;
+}
+
+.file-input {
+  margin-bottom: calc(10px + 0.5vw);
+  padding: calc(5px + 0.3vw);
+  font-size: calc(0.9rem + 0.1vw);
+}
+
+.upload-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: calc(8px + 0.5vw) calc(15px + 0.8vw);
+  border-radius: calc(4px + 0.2vw);
+  cursor: pointer;
+  font-size: calc(1rem + 0.2vw);
+  transition: background-color 0.2s;
+}
+
+.upload-button:hover {
+  background-color: #0056b3;
+}
+
+.upload-status {
+  margin-top: calc(10px + 0.5vw);
+  padding: calc(5px + 0.3vw);
+  border-radius: calc(4px + 0.2vw);
+  text-align: center;
+  font-size: calc(0.9rem + 0.2vw);
+}
+
+.firmware-info {
+  margin-top: calc(20px + 1vw);
+  padding: calc(10px + 0.5vw);
+  background-color: #f8f9fa;
+  border-radius: calc(4px + 0.2vw);
+}
+
+.firmware-info h3 {
+  margin-bottom: calc(10px + 0.5vw);
+  color: #333;
+  font-size: calc(1.2rem + 0.3vw);
+}
+
+.firmware-info p {
+  margin: calc(5px + 0.3vw) 0;
+  color: #666;
+  font-size: calc(0.9rem + 0.2vw);
+}
+
+@media (max-width: 768px) {
+  .firmware-container {
+    margin: calc(10px + 0.5vw);
+    padding: calc(15px + 0.8vw);
+  }
+
+  .firmware-header {
+    flex-direction: column;
+    gap: calc(10px + 0.5vw);
+    text-align: center;
+  }
+
+  .manage-firmware-button {
+    width: 100%;
+    text-align: center;
+  }
+} 
