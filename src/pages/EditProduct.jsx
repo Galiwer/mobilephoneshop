@@ -11,7 +11,7 @@ const EditProduct = () => {
   const { id } = useParams();
 
   useEffect(() => {
-    // Check for admin access
+   
     if (!UserService.isAuthenticated()) {
       navigate("/login");
       return;
@@ -28,7 +28,7 @@ const EditProduct = () => {
   const fetchProduct = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost:8080/api/products/${id}`);
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/products/${id}`);
       
       if (!response.ok) {
         throw new Error('Failed to fetch product');

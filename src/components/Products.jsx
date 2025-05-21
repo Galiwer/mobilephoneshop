@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import UserService from '../services/UserService';
+import api from '../services/api';
+import config from '../config';
 import './Products.css';
 
 const Products = () => {
@@ -22,13 +24,7 @@ const Products = () => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const response = await fetch('http://localhost:8080/api/products');
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        
-        const data = await response.json();
+        const data = await api.getProducts();
         setProducts(data);
       } catch (err) {
         setError(err.message);
@@ -111,10 +107,10 @@ const Products = () => {
             >
               <div className="product-image-container">
                 <img
-                  src={`http://localhost:8080/images/${product.imageFileName}`}
+                  src={`${config.imageUrl}/${product.imageFileName}`}
                   alt={product.name}
                   className="product-image"
-                  onClick={() => setSelectedImage(`http://localhost:8080/images/${product.imageFileName}`)}
+                  onClick={() => setSelectedImage(`${config.imageUrl}/${product.imageFileName}`)}
                   onError={handleImageError}
                 />
               </div>

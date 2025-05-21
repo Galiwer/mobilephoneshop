@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import api from '../services/api';
+import config from '../config';
 import './ProductDetails.css';
 
 const ProductDetails = () => {
@@ -13,13 +15,7 @@ const ProductDetails = () => {
     const fetchProductDetails = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`http://localhost:8080/api/products/${id}`);
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        
-        const data = await response.json();
+        const data = await api.getProductById(id);
         setProduct(data);
       } catch (err) {
         setError(err.message);
@@ -90,11 +86,11 @@ const ProductDetails = () => {
         <div className="product-details-left">
           <div className="product-image-container">
             <img
-              src={`http://localhost:8080/images/${product.imageFileName}`}
+              src={`${config.imageUrl}/${product.imageFileName}`}
               alt={product.name}
               onError={handleImageError}
               className="product-details-image"
-              onClick={() => setSelectedImage(`http://localhost:8080/images/${product.imageFileName}`)}
+              onClick={() => setSelectedImage(`${config.imageUrl}/${product.imageFileName}`)}
             />
             <div className="image-overlay">
               <span>Click to zoom</span>

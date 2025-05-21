@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Banner from '../components/Banner';
 import Footer from '../components/Footer';
+import api from '../services/api';
+import config from '../config';
 import './Home.css';
 
 const Home = () => {
@@ -14,18 +16,18 @@ const Home = () => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const response = await fetch('http://localhost:8080/api/products');
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        
-        const data = await response.json();
+        console.log('Fetching products from:', config.apiUrl);
+        const data = await api.getProducts();
+        console.log('Received products:', data);
         // Only take the first 10 products
         setProducts(data.slice(0, 10));
       } catch (err) {
-        setError(err.message);
-        console.error('Error fetching products:', err);
+        console.error('Detailed error:', {
+          message: err.message,
+          stack: err.stack,
+          response: err.response,
+        });
+        setError(err.message || 'Failed to fetch products');
       } finally {
         setLoading(false);
       }
@@ -41,6 +43,7 @@ const Home = () => {
 
   // Handle image error
   const handleImageError = (e) => {
+    console.log('Image failed to load:', e.target.src);
     e.target.src = '/api/placeholder/300/200';
   };
 
@@ -66,12 +69,23 @@ const Home = () => {
         {error && (
           <div className="error-container">
             <p>Error loading products: {error}</p>
+            <button onClick={() => window.location.reload()} className="retry-button">
+              Retry
+            </button>
+            <div className="debug-info">
+              <p>API URL: {config.apiUrl}</p>
+              <p>Image URL: {config.imageUrl}</p>
+            </div>
           </div>
         )}
 
         {!loading && !error && products.length === 0 && (
           <div className="no-products">
             <p>No products available at this time.</p>
+            <div className="debug-info">
+              <p>API URL: {config.apiUrl}</p>
+              <p>Image URL: {config.imageUrl}</p>
+            </div>
           </div>
         )}
         
@@ -85,7 +99,7 @@ const Home = () => {
               >
                 <div className="product-image-wrapper">
                   <img 
-                    src={`http://localhost:8080/images/${product.imageFileName}`}
+                    src={`${config.imageUrl}/${product.imageFileName}`}
                     alt={product.name}
                     onError={handleImageError}
                   />

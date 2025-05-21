@@ -98,7 +98,7 @@ const ProgressUpdate = () => {
       try {
         setError(null);
         await axios.delete(
-          `http://localhost:8080/job/${jobNumber}`,
+          `${process.env.REACT_APP_API_BASE_URL}/job/${jobNumber}`,
           getAuthHeaders()
         );
         fetchJobs();

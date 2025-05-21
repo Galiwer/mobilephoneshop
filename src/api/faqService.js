@@ -1,6 +1,7 @@
-import config from '../config';
+import config from "../config";
 
-const BASE_URL = `${config.apiUrl}/api/faqs`;
+
+const BASE_URL = config.apiUrl + "/api/faqs";
 
 export const getAllFaqs = async () => {
   const res = await fetch(BASE_URL);

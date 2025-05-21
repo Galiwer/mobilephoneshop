@@ -1,8 +1,8 @@
 import axios from "axios";
-import config from '../config';
+import config from "../config";
 
 class UserService {
-    static BASE_URL = config.apiUrl;
+    static BASE_URL = config.apiUrl
 
     static async login(email, password) {
         try {
