@@ -1,4 +1,6 @@
-const BASE_URL = "http://localhost:8080/api/faqs";
+import config from '../config';
+
+const BASE_URL = `${config.apiUrl}/api/faqs`;
 
 export const getAllFaqs = async () => {
   const res = await fetch(BASE_URL);

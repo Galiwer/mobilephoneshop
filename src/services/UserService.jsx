@@ -1,7 +1,8 @@
 import axios from "axios";
+import config from '../config';
 
 class UserService {
-    static BASE_URL = "http://localhost:8080"
+    static BASE_URL = config.apiUrl;
 
     static async login(email, password) {
         try {
