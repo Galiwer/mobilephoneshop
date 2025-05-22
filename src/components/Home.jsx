@@ -77,11 +77,6 @@ const Home = () => {
       <section className="featured-products">
         <div className="section-header">
           <h2 id="products">Featured Products</h2>
-          {!isUserAuthenticated && (
-            <button onClick={handleLoginClick} className="login-button">
-              Log in to view more
-            </button>
-          )}
         </div>
         
         {loading && (
@@ -91,19 +86,6 @@ const Home = () => {
           </div>
         )}
         
-        {error && (
-          <div className="error-container">
-            <p>Error loading products: {error}</p>
-            <button onClick={() => window.location.reload()} className="retry-button">
-              Retry
-            </button>
-            {!isUserAuthenticated && (
-              <button onClick={handleLoginClick} className="login-button">
-                Log in
-              </button>
-            )}
-          </div>
-        )}
 
         {!loading && !error && products.length === 0 && (
           <div className="no-products">
