@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { isAdmin } from '../services/UserService'
 import './FirmwareManager.css'
-import { getAllBrands, getModelsByBrand, getFirmwareVersions } from '../api'
+import { getAllBrands, getModelsByBrand, getFirmwareVersions } from '../services/FirmwareService'
 
 function FirmwareManager() {
   const [selectedBrand, setSelectedBrand] = useState('')

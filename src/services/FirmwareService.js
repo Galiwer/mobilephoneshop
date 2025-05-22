@@ -1,0 +1,97 @@
+import { getToken } from './UserService';
+import config from '../config';
+
+const BASE_URL = config.apiUrl + "/api/firmware";
+
+export const getAllBrands = async () => {
+    try {
+        const res = await fetch(`${BASE_URL}/brands`, {
+            headers: { 'Authorization': `Bearer ${getToken()}` }
+        });
+        if (!res.ok) {
+            throw new Error('Failed to fetch brands');
+        }
+        return res.json();
+    } catch (error) {
+        console.error('Error fetching brands:', error);
+        throw error;
+    }
+};
+
+export const getModelsByBrand = async (brand) => {
+    try {
+        const res = await fetch(`${BASE_URL}/models/${brand}`, {
+            headers: { 'Authorization': `Bearer ${getToken()}` }
+        });
+        if (!res.ok) {
+            throw new Error('Failed to fetch models');
+        }
+        return res.json();
+    } catch (error) {
+        console.error('Error fetching models:', error);
+        throw error;
+    }
+};
+
+export const getFirmwareVersions = async (brand, model) => {
+    try {
+        const res = await fetch(`${BASE_URL}/${brand}/${model}`, {
+            headers: { 'Authorization': `Bearer ${getToken()}` }
+        });
+        if (!res.ok) {
+            throw new Error('Failed to fetch firmware versions');
+        }
+        return res.json();
+    } catch (error) {
+        console.error('Error fetching firmware versions:', error);
+        throw error;
+    }
+};
+
+export const uploadFirmware = async (firmwareData) => {
+    try {
+        const res = await fetch(BASE_URL, {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${getToken()}` },
+            body: firmwareData // FormData should be sent as is
+        });
+        if (!res.ok) {
+            throw new Error('Failed to upload firmware');
+        }
+        return res.json();
+    } catch (error) {
+        console.error('Error uploading firmware:', error);
+        throw error;
+    }
+};
+
+export const getAllFirmware = async () => {
+    try {
+        const res = await fetch(BASE_URL, {
+            headers: { 'Authorization': `Bearer ${getToken()}` }
+        });
+        if (!res.ok) {
+            throw new Error('Failed to fetch firmware');
+        }
+        return res.json();
+    } catch (error) {
+        console.error('Error fetching firmware:', error);
+        throw error;
+    }
+};
+
+export const deleteFirmware = async (id) => {
+    try {
+        const res = await fetch(`${BASE_URL}/${id}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${getToken()}` }
+        });
+        if (!res.ok) {
+            throw new Error('Failed to delete firmware');
+        }
+        return res.json();
+    } catch (error) {
+        console.error('Error deleting firmware:', error);
+        throw error;
+    }
+}; 
