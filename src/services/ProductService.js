@@ -1,14 +1,24 @@
 import UserService from './UserService';
 import config from '../config';
+import axios from 'axios';
 
 class ProductService {
     static axiosInstance = UserService.axiosInstance;
+    
+    // Create a public instance without auth headers for public endpoints
+    static publicAxiosInstance = axios.create({
+        baseURL: config.apiUrl,
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        }
+    });
 
-    // Product Management
+    // Public Product Management
     static async getAllProducts() {
         try {
-            const response = await this.axiosInstance.get('/api/products');
-            return response;
+            const response = await this.publicAxiosInstance.get('/api/products');
+            return response.data;
         } catch (error) {
             console.error('Error fetching products:', error);
             throw UserService.handleError(error);
@@ -17,14 +27,15 @@ class ProductService {
 
     static async getProductById(id) {
         try {
-            const response = await this.axiosInstance.get(`/api/products/${id}`);
-            return response;
+            const response = await this.publicAxiosInstance.get(`/api/products/${id}`);
+            return response.data;
         } catch (error) {
             console.error('Error fetching product:', error);
             throw UserService.handleError(error);
         }
     }
 
+    // Protected Product Management (requires authentication)
     static async createProduct(productData) {
         try {
             const formData = new FormData();

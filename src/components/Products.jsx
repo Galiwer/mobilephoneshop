@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import UserService from '../services/UserService';
-import api from '../services/api';
+import ProductService from '../services/ProductService';
 import config from '../config';
 import './Products.css';
 
@@ -14,41 +14,28 @@ const Products = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check authentication and admin status
-    const checkAuth = () => {
-      const isAuthenticated = UserService.isAuthenticated();
-      if (!isAuthenticated) {
-        navigate('/login', { state: { from: '/products' } });
-        return false;
-      }
+    // Only check admin status
+    const checkAdminStatus = () => {
       const adminStatus = UserService.isAdmin();
       setIsAdmin(adminStatus);
-      return true;
     };
 
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        // Only fetch if authenticated
-        if (checkAuth()) {
-          const data = await api.getProducts();
-          setProducts(data);
-        }
+        const data = await ProductService.getAllProducts();
+        setProducts(data);
       } catch (err) {
         console.error('Error fetching products:', err);
-        if (err.response?.status === 403) {
-          setError('Please log in to view products');
-          navigate('/login', { state: { from: '/products' } });
-        } else {
-          setError(err.message || 'Failed to fetch products');
-        }
+        setError(err.message || 'Failed to fetch products');
       } finally {
         setLoading(false);
       }
     };
 
+    checkAdminStatus();
     fetchProducts();
-  }, [navigate]);
+  }, []);
 
   // Function to format price in Rs
   const formatPrice = (price) => {
