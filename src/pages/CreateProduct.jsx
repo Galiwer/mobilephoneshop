@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { isAuthenticated, isAdmin, logout } from '../services/UserService';
-import { validateProduct, createProduct } from '../services/ProductService';
+import { validateProduct, createProduct } from '../api/productService';
 import './CreateProduct.css';
 
 const CreateProduct = () => {

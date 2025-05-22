@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Banner from '../components/Banner';
 import Footer from '../components/Footer';
-import { getAllProducts } from '../services/ProductService';
+import { getAllProducts, getImageUrl } from '../api/productService';
+import config from '../config';
 import './Home.css';
 
 const Home = () => {
@@ -71,7 +72,7 @@ const Home = () => {
               <div key={product.id} className="product-highlight">
                 <div className="product-image-wrapper">
                   <img 
-                    src={`${config.imageUrl}/${product.imageFileName}`}
+                    src={getImageUrl(product.imageFileName)}
                     alt={product.name}
                     onError={handleImageError}
                   />

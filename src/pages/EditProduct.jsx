@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { isAuthenticated, isAdmin, logout } from '../services/UserService';
-import { getProductById, validateProduct, updateProduct, getImageUrl } from '../services/ProductService';
+import { getProductById, validateProduct, updateProduct, getImageUrl } from '../api/productService';
 import './EditProduct.css';
 
 const EditProduct = () => {
