@@ -1,6 +1,9 @@
+const RAILWAY_URL = "https://graceful-strength-production-360f.up.railway.app";
+
 const config = {
-    apiUrl: process.env.VITE_API_URL || 'http://localhost:3000/api',
-    // Add other configuration values as needed
+  apiUrl: import.meta.env.REACT_APP_API_URL || RAILWAY_URL,
+  imageUrl: import.meta.env.REACT_APP_IMAGE_URL || `${RAILWAY_URL}/images`,
+  isProduction: import.meta.env.NODE_ENV === "production"
 };
 
 export default config;
