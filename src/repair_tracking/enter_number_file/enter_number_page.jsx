@@ -1,105 +1,99 @@
-import axios from "axios";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import UserService from "../../services/UserService";
+import RepairTrackingService from "../RepairTrackingService";
 import "./enter_number_page.css";
 
 export default function EnterNumberPage() {
   const [jobNumber, setJobNumber] = useState("");
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
+    // Check admin status once on component mount
     const checkAdminStatus = () => {
-      const token = localStorage.getItem('token');
-      const role = localStorage.getItem('role');
-      
-      // Log the current state
-      console.log('Current auth state:', {
-        hasToken: !!token,
-        role: role,
-        roleType: typeof role,
-        isExactlyAdmin: role === 'ADMIN',
-        isAdminService: UserService.isAdmin(),
-        isAuthenticatedService: UserService.isAuthenticated(),
-        localStorage: {
-          token: token ? 'present' : 'missing',
-          role: role || 'missing'
+      try {
+        const isAuthenticated = UserService.isAuthenticated();
+        const adminStatus = UserService.isAdmin();
+        
+        // Log auth state in development
+        if (process.env.NODE_ENV === 'development') {
+          console.log('Auth state:', {
+            isAuthenticated,
+            isAdmin: adminStatus,
+            token: UserService.getToken() ? 'present' : 'missing',
+            role: localStorage.getItem(UserService.ROLE_KEY)
+          });
         }
-      });
 
-      // Check if user is admin
-      const adminCheck = token && (role === 'ADMIN');
-      console.log('Admin check result:', adminCheck);
-      
-      setIsAdmin(adminCheck);
+        setIsAdmin(isAuthenticated && adminStatus);
+      } catch (error) {
+        console.error('Error checking admin status:', error);
+        setIsAdmin(false);
+      }
     };
 
-    // Check immediately
     checkAdminStatus();
-
-    // Set up interval to check periodically
-    const interval = setInterval(checkAdminStatus, 1000);
-
-    // Clean up
-    return () => {
-      clearInterval(interval);
-    };
   }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const trimmedJobNumber = jobNumber.trim();
+
     if (!trimmedJobNumber) {
-      alert("Please enter a valid job number.");
+      setError("Please enter a valid job number.");
       return;
     }
 
     try {
       setLoading(true);
-      const response = await axios.get(`http://localhost:8080/job/${trimmedJobNumber}`);
+      setError(null);
+      const jobData = await RepairTrackingService.getJobById(trimmedJobNumber);
 
-      if (response.data) {
+      if (jobData) {
         navigate("/repair_tracking/display_progress_file/display_progress_page", {
           state: { jobNumber: trimmedJobNumber },
         });
       } else {
-        alert("Job number not found.");
+        setError("Job number not found.");
       }
     } catch (error) {
       console.error("Error fetching job data:", error);
-      alert("An error occurred while fetching the job data. Please try again.");
+      setError(error.message || "An error occurred while fetching the job data. Please try again.");
+      
+      // Handle authentication errors
+      if (error.status === 401) {
+        UserService.logout();
+        navigate("/login");
+      }
     } finally {
       setLoading(false);
     }
   };
 
   const handleAdminAccess = () => {
-    const token = localStorage.getItem('token');
-    const role = localStorage.getItem('role');
-    
-    console.log('Admin access attempt:', {
-      hasToken: !!token,
-      role: role,
-      isAdmin: role === 'ADMIN'
-    });
+    try {
+      if (!UserService.isAuthenticated()) {
+        navigate("/login", { 
+          state: { 
+            returnUrl: "/repair_tracking/progress_update_file/progress_update_page" 
+          } 
+        });
+        return;
+      }
 
-    if (!token) {
-      console.log('No token found, redirecting to login');
-      navigate("/login");
-      return;
+      if (!UserService.isAdmin()) {
+        setError("You need administrator privileges to access this page.");
+        return;
+      }
+
+      navigate("/repair_tracking/progress_update_file/progress_update_page");
+    } catch (error) {
+      console.error('Error during admin access:', error);
+      setError("An error occurred while checking permissions. Please try again.");
     }
-    
-    if (role !== 'ADMIN') {
-      console.log('Not admin role:', role);
-      alert("You need administrator privileges to access this page.");
-      return;
-    }
-    
-    console.log('Admin access granted, navigating to progress update page');
-    navigate("/repair_tracking/progress_update_file/progress_update_page");
   };
 
   return (
@@ -107,7 +101,19 @@ export default function EnterNumberPage() {
       <div className="container">
         <div className="card">
           <h1 className="title">Repair Tracking</h1>
-          
+
+          {error && (
+            <div className="error-message" style={{ 
+              margin: '10px 0', 
+              padding: '10px', 
+              backgroundColor: '#ffebee', 
+              color: '#c62828', 
+              borderRadius: '4px',
+              textAlign: 'center' 
+            }}>
+              {error}
+            </div>
+          )}
 
           <form className="form" onSubmit={handleSubmit}>
             <div className="input-group">
@@ -118,23 +124,39 @@ export default function EnterNumberPage() {
                 id="jobNumber"
                 type="text"
                 value={jobNumber}
-                onChange={(e) => setJobNumber(e.target.value)}
+                onChange={(e) => {
+                  setJobNumber(e.target.value);
+                  setError(null); // Clear error when user types
+                }}
                 className="input"
-                placeholder="Eg: 12345"
+                placeholder="Enter your job number"
+                disabled={loading}
               />
             </div>
 
             <div className="button-group">
-              <button type="submit" className="primary-button" disabled={loading}>
-                {loading ? "Tracking..." : "Track"}
+              <button 
+                type="submit" 
+                className="primary-button" 
+                disabled={loading}
+              >
+                {loading ? (
+                  <span>
+                    <i className="fas fa-spinner fa-spin"></i> Tracking...
+                  </span>
+                ) : (
+                  "Track Repair"
+                )}
               </button>
+              
               {isAdmin && (
                 <button
                   type="button"
                   className="secondary-button"
                   onClick={handleAdminAccess}
+                  disabled={loading}
                 >
-                  Admin
+                  Admin Dashboard
                 </button>
               )}
             </div>

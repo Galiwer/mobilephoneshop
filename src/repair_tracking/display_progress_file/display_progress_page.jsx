@@ -1,6 +1,6 @@
 import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import RepairTrackingService from "../RepairTrackingService";
 import "./display_progress_page.css"; // Keep your updated CSS
 
 export default function RepairProgress() {
@@ -9,6 +9,7 @@ export default function RepairProgress() {
   const [status, setStatus] = useState(null);
   const [updateDates, setUpdateDates] = useState({});
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const formatDate = (dateStr) => {
     if (!dateStr)  return "";
@@ -17,11 +18,15 @@ export default function RepairProgress() {
 
   useEffect(() => {
     const fetchRepairData = async () => {
-      if (!jobNumber) return;
+      if (!jobNumber) {
+        setError("No job number provided");
+        setLoading(false);
+        return;
+      }
   
       try {
-        const response = await axios.get(`http://localhost:8080/job/${jobNumber}`);
-        const data = response.data;
+        setError(null);
+        const data = await RepairTrackingService.getJobById(jobNumber);
   
         if (data) {
           setStatus(parseInt(data.status)); 
@@ -31,11 +36,11 @@ export default function RepairProgress() {
             done : data.doneDate,
           });
         } else {
-          alert("Job number not found.");
+          setError("Job number not found.");
         }
       } catch (error) {
         console.error("Error fetching job data:", error);
-        alert("Something went wrong while fetching the job data.");
+        setError(error.message || "Something went wrong while fetching the job data.");
       } finally {
         setLoading(false);
       }
@@ -46,6 +51,7 @@ export default function RepairProgress() {
 
   const renderTimeline = () => {
     if (loading) return <p className="loading-text">Loading...</p>;
+    if (error) return <p className="error-text">{error}</p>;
     if (status === null) return <p className="loading-text">Job not found or no data available.</p>;
 
     const steps = [

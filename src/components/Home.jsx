@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import Banner from '../components/Banner';
 import Footer from '../components/Footer';
 import api from '../services/api';
+import UserService from '../services/UserService';
 import config from '../config';
 import './Home.css';
 
@@ -10,9 +11,17 @@ const Home = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Check authentication status
+    const checkAuth = () => {
+      const authStatus = UserService.isAuthenticated();
+      setIsAuthenticated(authStatus);
+    };
+
+    checkAuth();
     const fetchProducts = async () => {
       try {
         setLoading(true);
@@ -27,6 +36,14 @@ const Home = () => {
           stack: err.stack,
           response: err.response,
         });
+        
+        // Handle authentication errors
+        if (err.response?.status === 401) {
+          setError('Please log in to view products');
+          navigate('/login', { state: { from: '/' } });
+          return;
+        }
+        
         setError(err.message || 'Failed to fetch products');
       } finally {
         setLoading(false);
@@ -34,7 +51,7 @@ const Home = () => {
     };
 
     fetchProducts();
-  }, []);
+  }, [navigate]);
 
   // Function to format price in Rs
   const formatPrice = (price) => {
@@ -52,12 +69,24 @@ const Home = () => {
     navigate(`/product/${productId}`);
   };
 
+  // Handle login click
+  const handleLoginClick = () => {
+    navigate('/login', { state: { from: '/' } });
+  };
+
   return (
     <div className="home-container">
       <Banner />
       
       <section className="featured-products">
-        <h2 id="products">Featured Products</h2>
+        <div className="section-header">
+          <h2 id="products">Featured Products</h2>
+          {!isAuthenticated && (
+            <button onClick={handleLoginClick} className="login-button">
+              Log in to view more
+            </button>
+          )}
+        </div>
         
         {loading && (
           <div className="loading-container">
@@ -72,6 +101,11 @@ const Home = () => {
             <button onClick={() => window.location.reload()} className="retry-button">
               Retry
             </button>
+            {!isAuthenticated && (
+              <button onClick={handleLoginClick} className="login-button">
+                Log in
+              </button>
+            )}
             <div className="debug-info">
               <p>API URL: {config.apiUrl}</p>
               <p>Image URL: {config.imageUrl}</p>
@@ -123,6 +157,7 @@ const Home = () => {
         </div>
       </section>
       
+      <Footer />
     </div>
   );
 };

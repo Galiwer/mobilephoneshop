@@ -1,19 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import UserService from '../services/UserService';
+import ProductService from '../services/ProductService';
 import './EditProduct.css';
 
 const EditProduct = () => {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [saving, setSaving] = useState(false);
   const navigate = useNavigate();
   const { id } = useParams();
 
   useEffect(() => {
-   
     if (!UserService.isAuthenticated()) {
-      navigate("/login");
+      navigate("/login", { 
+        state: { returnUrl: `/EditProduct/${id}` } 
+      });
       return;
     }
 
@@ -28,18 +31,19 @@ const EditProduct = () => {
   const fetchProduct = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/products/${id}`);
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch product');
-      }
-      
-      const data = await response.json();
-      setProduct(data);
       setError(null);
-    } catch (err) {
-      console.error('Error fetching product:', err);
-      setError('Failed to load product. Please try again.');
+      const data = await ProductService.getProductById(id);
+      setProduct(data);
+    } catch (error) {
+      console.error('Error fetching product:', error);
+      setError(error.message || 'Failed to load product. Please try again.');
+      
+      if (error.status === 401) {
+        UserService.logout();
+        navigate("/login", { 
+          state: { returnUrl: `/EditProduct/${id}` } 
+        });
+      }
     } finally {
       setLoading(false);
     }
@@ -51,31 +55,35 @@ const EditProduct = () => {
       ...prev,
       [name]: files ? files[0] : value
     }));
+    setError(null); // Clear error when user makes changes
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
     try {
-      const formData = new FormData();
-      Object.keys(product).forEach((key) => {
-        if (key !== 'imageFileName' || (key === 'imageFile' && product[key])) {
-          formData.append(key, product[key]);
-        }
-      });
+      setSaving(true);
+      setError(null);
 
-      const response = await fetch(`http://localhost:8080/api/products/update/${id}`, {
-        method: 'PUT',
-        body: formData
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to update product');
-      }
-
+      // Validate product data
+      ProductService.validateProduct(product);
+      
+      // Update product
+      await ProductService.updateProduct(id, product);
+      
       navigate('/ProductList');
-    } catch (err) {
-      console.error('Error updating product:', err);
-      alert('Failed to update product. Please try again.');
+    } catch (error) {
+      console.error('Error updating product:', error);
+      setError(error.message || 'Failed to update product. Please try again.');
+      
+      if (error.status === 401) {
+        UserService.logout();
+        navigate("/login", { 
+          state: { returnUrl: `/EditProduct/${id}` } 
+        });
+      }
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -91,9 +99,12 @@ const EditProduct = () => {
   if (error) {
     return (
       <div className="error-container">
-        <p>{error}</p>
+        <p className="error-message">{error}</p>
         <button onClick={fetchProduct} className="retry-button">
           Retry
+        </button>
+        <button onClick={() => navigate('/ProductList')} className="back-button">
+          Back to Products
         </button>
       </div>
     );
@@ -113,10 +124,27 @@ const EditProduct = () => {
   return (
     <div className="edit-product-container">
       <h2 className="title">Edit Product</h2>
+
+      {error && (
+        <div className="error-message" style={{ 
+          margin: '10px 0', 
+          padding: '10px', 
+          backgroundColor: '#ffebee', 
+          color: '#c62828', 
+          borderRadius: '4px',
+          textAlign: 'center' 
+        }}>
+          {error}
+        </div>
+      )}
+
       <form onSubmit={handleSubmit} encType="multipart/form-data" className="product-form">
         {['name', 'brand', 'price', 'category', 'description'].map((field) => (
           <div className="form-group" key={field}>
-            <label className="form-label">{field.charAt(0).toUpperCase() + field.slice(1)}</label>
+            <label className="form-label">
+              {field.charAt(0).toUpperCase() + field.slice(1)}
+              <span className="required">*</span>
+            </label>
             <input
               className="form-input"
               type={field === 'price' ? 'number' : 'text'}
@@ -125,23 +153,30 @@ const EditProduct = () => {
               value={product[field] || ''}
               onChange={handleChange}
               required
+              disabled={saving}
+              placeholder={`Enter product ${field}`}
             />
           </div>
         ))}
         <div className="form-group">
-          <label className="form-label">Image</label>
+          <label className="form-label">
+            Image
+            {!product.imageFileName && <span className="required">*</span>}
+          </label>
           <input
             className="form-input"
             type="file"
             name="imageFile"
             onChange={handleChange}
             accept="image/*"
+            required={!product.imageFileName}
+            disabled={saving}
           />
           {product.imageFileName && (
             <div className="current-image">
               <p>Current image:</p>
               <img
-                src={`http://localhost:8080/images/${product.imageFileName}`}
+                src={ProductService.getImageUrl(product.imageFileName)}
                 alt="Current product"
                 className="preview-image"
               />
@@ -149,11 +184,24 @@ const EditProduct = () => {
           )}
         </div>
         <div className="form-buttons">
-          <button type="submit" className="btn-submit">Update</button>
+          <button 
+            type="submit" 
+            className="btn-submit"
+            disabled={saving}
+          >
+            {saving ? (
+              <span>
+                <i className="fas fa-spinner fa-spin"></i> Updating...
+              </span>
+            ) : (
+              "Update Product"
+            )}
+          </button>
           <button
             type="button"
             className="btn-cancel"
             onClick={() => navigate('/ProductList')}
+            disabled={saving}
           >
             Cancel
           </button>

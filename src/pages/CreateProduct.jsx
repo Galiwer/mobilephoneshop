@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import UserService from '../services/UserService';
+import ProductService from '../services/ProductService';
 import './CreateProduct.css';
 
 const CreateProduct = () => {
@@ -13,11 +14,15 @@ const CreateProduct = () => {
     description: '',
     imageFile: null,
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     // Check for admin access
     if (!UserService.isAuthenticated()) {
-      navigate("/login");
+      navigate("/login", { 
+        state: { returnUrl: "/CreateProduct" } 
+      });
       return;
     }
 
@@ -29,40 +34,67 @@ const CreateProduct = () => {
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
-    setProduct((prev) => ({ ...prev, [name]: files ? files[0] : value }));
+    setProduct((prev) => ({ 
+      ...prev, 
+      [name]: files ? files[0] : value 
+    }));
+    setError(null); // Clear error when user makes changes
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
     try {
-      const formData = new FormData();
-      for (let key in product) {
-        formData.append(key, product[key]);
-      }
+      setLoading(true);
+      setError(null);
+
+      // Validate product data
+      ProductService.validateProduct(product);
       
-      const response = await fetch('http://localhost:8080/api/products', {
-        method: 'POST',
-        body: formData
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to create product');
-      }
-
+      // Create product
+      await ProductService.createProduct(product);
+      
       navigate('/ProductList');
     } catch (error) {
       console.error('Error creating product:', error);
-      alert('Failed to create product. Please try again.');
+      setError(error.message || 'Failed to create product. Please try again.');
+      
+      // Handle authentication errors
+      if (error.status === 401) {
+        UserService.logout();
+        navigate("/login", { 
+          state: { returnUrl: "/CreateProduct" } 
+        });
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="create-product-container">
       <h2 className="title">New Product</h2>
+      
+      {error && (
+        <div className="error-message" style={{ 
+          margin: '10px 0', 
+          padding: '10px', 
+          backgroundColor: '#ffebee', 
+          color: '#c62828', 
+          borderRadius: '4px',
+          textAlign: 'center' 
+        }}>
+          {error}
+        </div>
+      )}
+
       <form onSubmit={handleSubmit} encType="multipart/form-data" className="product-form">
         {['name', 'brand', 'price', 'category', 'description'].map((field) => (
           <div className="form-group" key={field}>
-            <label className="form-label">{field.charAt(0).toUpperCase() + field.slice(1)}</label>
+            <label className="form-label">
+              {field.charAt(0).toUpperCase() + field.slice(1)}
+              <span className="required">*</span>
+            </label>
             <input
               className="form-input"
               type={field === 'price' ? 'number' : 'text'}
@@ -71,11 +103,16 @@ const CreateProduct = () => {
               value={product[field] || ''}
               onChange={handleChange}
               required
+              disabled={loading}
+              placeholder={`Enter product ${field}`}
             />
           </div>
         ))}
         <div className="form-group">
-          <label className="form-label">Image</label>
+          <label className="form-label">
+            Image
+            <span className="required">*</span>
+          </label>
           <input 
             className="form-input" 
             type="file" 
@@ -83,14 +120,28 @@ const CreateProduct = () => {
             onChange={handleChange}
             accept="image/*"
             required 
+            disabled={loading}
           />
         </div>
         <div className="form-buttons">
-          <button type="submit" className="btn-submit">Submit</button>
+          <button 
+            type="submit" 
+            className="btn-submit" 
+            disabled={loading}
+          >
+            {loading ? (
+              <span>
+                <i className="fas fa-spinner fa-spin"></i> Creating...
+              </span>
+            ) : (
+              "Create Product"
+            )}
+          </button>
           <button 
             type="button" 
             className="btn-cancel" 
             onClick={() => navigate('/ProductList')}
+            disabled={loading}
           >
             Cancel
           </button>

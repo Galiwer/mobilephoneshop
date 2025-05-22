@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import UserService from "../../services/UserService";
+import RepairTrackingService from "../RepairTrackingService";
 import "./progress_update_page.css";
 
 const ProgressUpdate = () => {
@@ -26,23 +26,10 @@ const ProgressUpdate = () => {
     fetchJobs();
   }, [navigate]);
 
-  const getAuthHeaders = () => {
-    const token = localStorage.getItem('token');
-    return {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      }
-    };
-  };
-
   const fetchJobs = async () => {
     try {
       setError(null);
-      const { data } = await axios.get(
-        "http://localhost:8080/jobs",
-        getAuthHeaders()
-      );
+      const data = await RepairTrackingService.getAllJobs();
       
       if (!data) {
         throw new Error('No data received from server');
@@ -56,38 +43,23 @@ const ProgressUpdate = () => {
       setNewJobNumber(`J${lastNumber + 1}`);
     } catch (error) {
       console.error("Error fetching jobs:", error);
-      setError("Failed to load jobs. Please try again later.");
-      if (error.response?.status === 401 || error.response?.status === 403) {
+      setError(error.message || "Failed to load jobs. Please try again later.");
+      if (error.status === 401 || error.status === 403) {
         navigate("/login");
       }
     }
   };
 
-  const statusMap = {
-    1: "In Queue",
-    2: "Processing",
-    3: "Repaired",
-  };
-
-  const reverseStatusMap = {
-    "In Queue": 1,
-    "Processing": 2,
-    "Repaired": 3,
-  };
-
   const handleStatusChange = async (jobNumber, newStatusText) => {
     try {
       setError(null);
-      await axios.put(
-        `http://localhost:8080/job/${jobNumber}/status`,
-        reverseStatusMap[newStatusText],
-        getAuthHeaders()
-      );
+      const statusCode = RepairTrackingService.getStatusCode(newStatusText);
+      await RepairTrackingService.updateJobStatus(jobNumber, statusCode);
       fetchJobs();
     } catch (error) {
       console.error("Error updating status:", error);
-      setError("Failed to update job status. Please try again.");
-      if (error.response?.status === 401 || error.response?.status === 403) {
+      setError(error.message || "Failed to update job status. Please try again.");
+      if (error.status === 401 || error.status === 403) {
         navigate("/login");
       }
     }
@@ -97,15 +69,12 @@ const ProgressUpdate = () => {
     if (window.confirm("Are you sure you want to delete this job?")) {
       try {
         setError(null);
-        await axios.delete(
-          `${process.env.REACT_APP_API_BASE_URL}/job/${jobNumber}`,
-          getAuthHeaders()
-        );
+        await RepairTrackingService.deleteJob(jobNumber);
         fetchJobs();
       } catch (error) {
         console.error("Error deleting job:", error);
-        setError("Failed to delete job. Please try again.");
-        if (error.response?.status === 401 || error.response?.status === 403) {
+        setError(error.message || "Failed to delete job. Please try again.");
+        if (error.status === 401 || error.status === 403) {
           navigate("/login");
         }
       }
@@ -116,19 +85,15 @@ const ProgressUpdate = () => {
     if (!newJobNumber.trim()) return;
     try {
       setError(null);
-      await axios.post(
-        "http://localhost:8080/job",
-        {
-          jobNumber: newJobNumber,
-          status: 1,
-        },
-        getAuthHeaders()
-      );
+      await RepairTrackingService.createJob({
+        jobNumber: newJobNumber,
+        status: 1,
+      });
       fetchJobs();
     } catch (error) {
       console.error("Error adding job:", error);
-      setError("Failed to add job. Please try again.");
-      if (error.response?.status === 401 || error.response?.status === 403) {
+      setError(error.message || "Failed to add job. Please try again.");
+      if (error.status === 401 || error.status === 403) {
         navigate("/login");
       }
     }
@@ -174,7 +139,6 @@ const ProgressUpdate = () => {
           </div>
         )}
 
-        {/* Search Bar */}
         <div className="search-bar">
           <input
             type="text"
@@ -200,32 +164,33 @@ const ProgressUpdate = () => {
               {filteredJobs.map((job) => (
                 <tr key={job.jobNumber}>
                   <td>{job.jobNumber}</td>
-                  <td>
-                    <span className={`status-badge status-${job.status}`}>
-                      {statusMap[job.status]}
-                    </span>
-                  </td>
+                  <td>{RepairTrackingService.getStatusText(job.status)}</td>
                   <td>
                     {getLastUpdatedDate(job)
                       ? new Date(getLastUpdatedDate(job)).toLocaleString()
-                      : "N/A"}
+                      : "Not available"}
                   </td>
                   <td>
                     <select
+                      value={RepairTrackingService.getStatusText(job.status)}
+                      onChange={(e) =>
+                        handleStatusChange(job.jobNumber, e.target.value)
+                      }
                       className="status-select"
-                      value={statusMap[job.status]}
-                      onChange={(e) => handleStatusChange(job.jobNumber, e.target.value)}
                     >
-                      <option value="">Change Status</option>
-                      <option value="In Queue">In Queue</option>
-                      <option value="Processing">Processing</option>
-                      <option value="Repaired">Repaired</option>
+                      {Object.values(RepairTrackingService.statusMap).map(
+                        (status) => (
+                          <option key={status} value={status}>
+                            {status}
+                          </option>
+                        )
+                      )}
                     </select>
                   </td>
                   <td>
                     <button
-                      className="delete-btn"
                       onClick={() => handleDelete(job.jobNumber)}
+                      className="delete-btn"
                     >
                       Delete
                     </button>
