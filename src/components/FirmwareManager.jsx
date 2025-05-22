@@ -28,8 +28,9 @@ function FirmwareManager() {
   const fetchBrands = async () => {
     try {
       setLoading(true)
-      const response = await getAllBrands()
-      setAvailableBrands(response.data)
+      setError(null)
+      const brands = await getAllBrands()
+      setAvailableBrands(Array.isArray(brands) ? brands : [])
       setLoading(false)
     } catch (err) {
       setError('Failed to load brands. Please try again later.')
@@ -47,8 +48,9 @@ function FirmwareManager() {
     if (brand) {
       try {
         setLoading(true)
-        const response = await getModelsByBrand(brand)
-        setAvailableModels(response.data)
+        setError(null)
+        const models = await getModelsByBrand(brand)
+        setAvailableModels(Array.isArray(models) ? models : [])
         setLoading(false)
       } catch (err) {
         setError('Failed to load models. Please try again later.')
@@ -67,8 +69,9 @@ function FirmwareManager() {
     if (selectedBrand && model) {
       try {
         setLoading(true)
-        const response = await getFirmwareVersions(selectedBrand, model)
-        setFirmwareVersions(response.data)
+        setError(null)
+        const firmware = await getFirmwareVersions(selectedBrand, model)
+        setFirmwareVersions(Array.isArray(firmware) ? firmware : [])
         setLoading(false)
       } catch (err) {
         setError('Failed to load firmware versions. Please try again later.')
@@ -81,6 +84,10 @@ function FirmwareManager() {
   }
 
   const handleDownload = (downloadUrl) => {
+    if (!downloadUrl) {
+      setError('Download link not available')
+      return
+    }
     window.open(downloadUrl, '_blank')
   }
   
@@ -175,8 +182,9 @@ function FirmwareManager() {
                   )}
                 </div>
                 <button 
-                  onClick={() => handleDownload(firmware.firmwareLink)} 
+                  onClick={() => handleDownload(firmware.downloadUrl)} 
                   className="download-button"
+                  disabled={!firmware.downloadUrl}
                 >
                   Download
                 </button>

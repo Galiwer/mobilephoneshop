@@ -3,11 +3,10 @@ import config from '../config';
 
 const BASE_URL = config.apiUrl + "/api/firmware";
 
+// Public endpoints
 export const getAllBrands = async () => {
     try {
-        const res = await fetch(`${BASE_URL}/brands`, {
-            headers: { 'Authorization': `Bearer ${getToken()}` }
-        });
+        const res = await fetch(`${BASE_URL}/brands`);
         if (!res.ok) {
             throw new Error('Failed to fetch brands');
         }
@@ -20,9 +19,7 @@ export const getAllBrands = async () => {
 
 export const getModelsByBrand = async (brand) => {
     try {
-        const res = await fetch(`${BASE_URL}/models/${brand}`, {
-            headers: { 'Authorization': `Bearer ${getToken()}` }
-        });
+        const res = await fetch(`${BASE_URL}/models/${brand}`);
         if (!res.ok) {
             throw new Error('Failed to fetch models');
         }
@@ -35,9 +32,7 @@ export const getModelsByBrand = async (brand) => {
 
 export const getFirmwareVersions = async (brand, model) => {
     try {
-        const res = await fetch(`${BASE_URL}/${brand}/${model}`, {
-            headers: { 'Authorization': `Bearer ${getToken()}` }
-        });
+        const res = await fetch(`${BASE_URL}/view/${brand}/${model}`);
         if (!res.ok) {
             throw new Error('Failed to fetch firmware versions');
         }
@@ -48,9 +43,10 @@ export const getFirmwareVersions = async (brand, model) => {
     }
 };
 
+// Admin endpoints (require authentication)
 export const uploadFirmware = async (firmwareData) => {
     try {
-        const res = await fetch(BASE_URL, {
+        const res = await fetch(`${BASE_URL}/upload`, {
             method: 'POST',
             headers: { 'Authorization': `Bearer ${getToken()}` },
             body: firmwareData // FormData should be sent as is
@@ -67,7 +63,7 @@ export const uploadFirmware = async (firmwareData) => {
 
 export const getAllFirmware = async () => {
     try {
-        const res = await fetch(BASE_URL, {
+        const res = await fetch(`${BASE_URL}/admin/list`, {
             headers: { 'Authorization': `Bearer ${getToken()}` }
         });
         if (!res.ok) {
@@ -82,7 +78,7 @@ export const getAllFirmware = async () => {
 
 export const deleteFirmware = async (id) => {
     try {
-        const res = await fetch(`${BASE_URL}/${id}`, {
+        const res = await fetch(`${BASE_URL}/delete/${id}`, {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${getToken()}` }
         });
