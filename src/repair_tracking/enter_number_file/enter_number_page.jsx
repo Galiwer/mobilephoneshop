@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { isAuthenticated, isAdmin, logout, getToken, ROLE_KEY } from "../../services/UserService";
+import { isAuthenticated, isAdmin, logout, getToken } from "../../services/UserService";
 import { getJobById } from "../RepairTrackingService";
 import "./enter_number_page.css";
 
@@ -23,8 +23,7 @@ export default function EnterNumberPage() {
           console.log('Auth state:', {
             isAuthenticated: authStatus,
             isAdmin: adminStatus,
-            token: getToken() ? 'present' : 'missing',
-            role: localStorage.getItem(ROLE_KEY)
+            token: getToken() ? 'present' : 'missing'
           });
         }
 
