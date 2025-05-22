@@ -3,6 +3,12 @@ import { useEffect, useState } from "react";
 import { getJobById } from "../RepairTrackingService";
 import "./display_progress_page.css"; // Keep your updated CSS
 
+const statusOrder = {
+  'IN_QUEUE': 1,
+  'IN_PROGRESS': 2,
+  'COMPLETED': 3
+};
+
 export default function RepairProgress() {
   const { state } = useLocation();
   const { jobNumber } = state || {};
@@ -29,7 +35,7 @@ export default function RepairProgress() {
         const data = await getJobById(jobNumber);
   
         if (data) {
-          setStatus(parseInt(data.status)); 
+          setStatus(statusOrder[data.status] || 0); 
           setUpdateDates({
             queue : data.queueDate,
             processing : data.processingDate,
