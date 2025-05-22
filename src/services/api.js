@@ -1,6 +1,8 @@
 import UserService from './UserService';
 import config from '../config';
 
+const BASE_URL = config.apiUrl;
+
 const api = {
   // Auth endpoints
   login: async (credentials) => {
@@ -29,7 +31,10 @@ const api = {
   // Job tracking
   getJobStatus: async (jobNumber) => {
     try {
-      return await UserService.axiosInstance.get(`/job/${jobNumber}`);
+      const res = await fetch(`${BASE_URL}/job/${jobNumber}`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+      });
+      return res.json();
     } catch (error) {
       console.error('getJobStatus error:', error);
       throw error;
