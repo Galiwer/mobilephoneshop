@@ -14,28 +14,41 @@ const Products = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check admin status
-    const checkAdminStatus = () => {
+    // Check authentication and admin status
+    const checkAuth = () => {
+      const isAuthenticated = UserService.isAuthenticated();
+      if (!isAuthenticated) {
+        navigate('/login', { state: { from: '/products' } });
+        return false;
+      }
       const adminStatus = UserService.isAdmin();
       setIsAdmin(adminStatus);
+      return true;
     };
 
-    checkAdminStatus();
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const data = await api.getProducts();
-        setProducts(data);
+        // Only fetch if authenticated
+        if (checkAuth()) {
+          const data = await api.getProducts();
+          setProducts(data);
+        }
       } catch (err) {
-        setError(err.message);
         console.error('Error fetching products:', err);
+        if (err.response?.status === 403) {
+          setError('Please log in to view products');
+          navigate('/login', { state: { from: '/products' } });
+        } else {
+          setError(err.message || 'Failed to fetch products');
+        }
       } finally {
         setLoading(false);
       }
     };
 
     fetchProducts();
-  }, []);
+  }, [navigate]);
 
   // Function to format price in Rs
   const formatPrice = (price) => {

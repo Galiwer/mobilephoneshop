@@ -70,21 +70,17 @@ const api = {
   // Auth endpoints
   login: async (credentials) => {
     try {
-      const response = await fetch(`${config.apiUrl}/auth/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        body: JSON.stringify(credentials),
-        mode: 'cors',
-        credentials: 'include',
-      });
-      const data = await handleResponse(response);
-      if (data.token) {
-        localStorage.setItem('token', data.token);
+      const response = await UserService.axiosInstance.post('/auth/login', credentials);
+      if (response.token) {
+        UserService.setToken(response.token);
+        if (response.refreshToken) {
+          UserService.setRefreshToken(response.refreshToken);
+        }
+        if (response.role) {
+          UserService.setRole(response.role);
+        }
       }
-      return data;
+      return response;
     } catch (error) {
       console.error('Login error:', error);
       throw error;
@@ -92,7 +88,7 @@ const api = {
   },
 
   logout: () => {
-    localStorage.removeItem('token');
+    UserService.logout();
   }
 };
 

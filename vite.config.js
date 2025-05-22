@@ -6,5 +6,12 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 5173,
+    proxy: {
+      '/api': {
+        target: 'https://graceful-strength-production-360f.up.railway.app',
+        changeOrigin: true,
+        secure: false,
+      }
+    }
   },
 })
