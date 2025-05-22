@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import api from '../services/api';
+import { getProductById } from '../services/ProductService';
 import config from '../config';
 import './ProductDetails.css';
 
@@ -15,7 +15,7 @@ const ProductDetails = () => {
     const fetchProductDetails = async () => {
       try {
         setLoading(true);
-        const data = await api.getProductById(id);
+        const data = await getProductById(id);
         setProduct(data);
       } catch (err) {
         setError(err.message);
