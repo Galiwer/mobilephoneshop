@@ -84,7 +84,7 @@ export default function EnterNumberPage() {
       <div className="container">
         <div className="card">
           <h1 className="title">Repair Tracking</h1>
-          <p className="subtitle">Enter your repair job number to track its progress</p>
+          
 
           {error && (
             <div className="error-message" style={{ 
