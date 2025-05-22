@@ -10,16 +10,16 @@ function Products() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isUserAuthenticated, setIsUserAuthenticated] = useState(false);
+  const [isUserAdmin, setIsUserAdmin] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     const checkAuth = () => {
       const authStatus = isAuthenticated();
       const adminStatus = isAdmin();
-      setIsAuthenticated(authStatus);
-      setIsAdmin(adminStatus);
+      setIsUserAuthenticated(authStatus);
+      setIsUserAdmin(adminStatus);
     };
 
     const fetchProducts = async () => {
@@ -70,7 +70,7 @@ function Products() {
     <div className="products-container">
       <div className="products-header">
         <h2 className="products-title">Our Products</h2>
-        {isAdmin && (
+        {isUserAdmin && (
           <button 
             className="manage-products-button"
             onClick={() => navigate('/ProductList')}

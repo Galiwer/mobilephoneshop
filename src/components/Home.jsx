@@ -11,14 +11,14 @@ const Home = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isUserAuthenticated, setIsUserAuthenticated] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     // Check authentication status
     const checkAuth = () => {
       const authStatus = isAuthenticated();
-      setIsAuthenticated(authStatus);
+      setIsUserAuthenticated(authStatus);
     };
 
     checkAuth();
@@ -81,7 +81,7 @@ const Home = () => {
       <section className="featured-products">
         <div className="section-header">
           <h2 id="products">Featured Products</h2>
-          {!isAuthenticated && (
+          {!isUserAuthenticated && (
             <button onClick={handleLoginClick} className="login-button">
               Log in to view more
             </button>
@@ -101,7 +101,7 @@ const Home = () => {
             <button onClick={() => window.location.reload()} className="retry-button">
               Retry
             </button>
-            {!isAuthenticated && (
+            {!isUserAuthenticated && (
               <button onClick={handleLoginClick} className="login-button">
                 Log in
               </button>

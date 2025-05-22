@@ -5,8 +5,8 @@ import { isAuthenticated, isAdmin, logout } from '../services/UserService';
 
 const Navibar = () => {
   const [menu, setMenu] = useState("Home");
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isUserAuthenticated, setIsUserAuthenticated] = useState(false);
+  const [isUserAdmin, setIsUserAdmin] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -19,14 +19,14 @@ const Navibar = () => {
   const checkAuthStatus = () => {
     const authStatus = isAuthenticated();
     const adminStatus = isAdmin();
-    setIsAuthenticated(authStatus);
-    setIsAdmin(adminStatus);
+    setIsUserAuthenticated(authStatus);
+    setIsUserAdmin(adminStatus);
   };
 
   const handleLogout = () => {
     logout();
-    setIsAuthenticated(false);
-    setIsAdmin(false);
+    setIsUserAuthenticated(false);
+    setIsUserAdmin(false);
     setIsMobileMenuOpen(false);
     navigate('/');
   };
@@ -86,7 +86,7 @@ const Navibar = () => {
         {menu === "About Us" && <hr />}
       </li>
 
-      {isAdmin && (
+      {isUserAdmin && (
         <li onClick={() => onClick("User Management")}>
           <Link to='/admin/user-management'>Users</Link>
           {menu === "User Management" && <hr />}
@@ -97,7 +97,7 @@ const Navibar = () => {
 
   const AuthButtons = ({ onButtonClick = () => {} }) => (
     <>
-      {isAuthenticated ? (
+      {isUserAuthenticated ? (
         <>
           <Link to='/profile' className="profile-link">
             <button className="profile-button" onClick={onButtonClick}>Profile</button>
