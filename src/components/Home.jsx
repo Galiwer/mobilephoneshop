@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Banner from '../components/Banner';
 import Footer from '../components/Footer';
-import { getProducts } from '../services/api';
+import { getAllProducts } from '../services/ProductService';
 import { isAuthenticated } from '../services/UserService';
 import config from '../config';
 import './Home.css';
@@ -26,7 +26,7 @@ const Home = () => {
       try {
         setLoading(true);
         console.log('Fetching products from:', config.apiUrl);
-        const data = await getProducts();
+        const data = await getAllProducts();
         console.log('Received products:', data);
         // Only take the first 10 products
         setProducts(data.slice(0, 10));
