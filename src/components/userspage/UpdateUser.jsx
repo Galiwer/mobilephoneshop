@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import UserService from '../../services/UserService';
+import { isAuthenticated, isAdmin, getUserById, updateUser } from '../../services/UserService';
 import './UpdateUser.css';
 
 function UpdateUser() {
@@ -18,12 +18,12 @@ function UpdateUser() {
 
   useEffect(() => {
     // Check for admin access
-    if (!UserService.isAuthenticated()) {
+    if (!isAuthenticated()) {
       navigate("/login");
       return;
     }
 
-    if (!UserService.isAdmin()) {
+    if (!isAdmin()) {
       navigate("/");
       return;
     }
@@ -35,8 +35,7 @@ function UpdateUser() {
     try {
       setLoading(true);
       setError(null);
-      const token = localStorage.getItem('token');
-      const response = await UserService.getUserById(userId, token);
+      const response = await getUserById(userId);
       const { name, email, role, city } = response.ourUsers;
       setUserData({ name, email, role, city });
     } catch (error) {
@@ -62,8 +61,7 @@ function UpdateUser() {
     e.preventDefault();
     try {
       setError(null);
-      const token = localStorage.getItem('token');
-      await UserService.updateUser(userId, userData, token);
+      await updateUser(userId, userData);
       navigate("/admin/user-management");
     } catch (error) {
       console.error('Error updating user:', error);

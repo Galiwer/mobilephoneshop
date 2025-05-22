@@ -1,22 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import UserService from '../services/UserService';
+import { Link, useNavigate } from 'react-router-dom';
+import { isAuthenticated, isAdmin } from '../services/UserService';
+import { getAllProducts, deleteProduct } from '../services/ProductService';
+import config from '../config';
 import './ProductList.css';
 
-const ProductList = () => {
-    const navigate = useNavigate();
+function ProductList() {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         // Check for admin access
-        if (!UserService.isAuthenticated()) {
+        if (!isAuthenticated()) {
             navigate("/login");
             return;
         }
 
-        if (!UserService.isAdmin()) {
+        if (!isAdmin()) {
             navigate("/");
             return;
         }
@@ -27,41 +29,25 @@ const ProductList = () => {
     const fetchProducts = async () => {
         try {
             setLoading(true);
-            const response = await fetch('http://localhost:8080/api/products');
-            
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-            
-            const data = await response.json();
+            const data = await getAllProducts();
             setProducts(data);
-        } catch (err) {
-            setError(err.message);
-            console.error('Error fetching products:', err);
+        } catch (error) {
+            console.error('Error fetching products:', error);
+            setError('Failed to fetch products');
         } finally {
             setLoading(false);
         }
     };
 
-    const handleDelete = async (productId) => {
-        if (!window.confirm('Are you sure you want to delete this product?')) {
-            return;
-        }
-
-        try {
-            const response = await fetch(`http://localhost:8080/api/products/${productId}`, {
-                method: 'DELETE'
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to delete product');
+    const handleDelete = async (id) => {
+        if (window.confirm('Are you sure you want to delete this product?')) {
+            try {
+                await deleteProduct(id);
+                setProducts(products.filter(product => product.id !== id));
+            } catch (error) {
+                console.error('Error deleting product:', error);
+                alert('Failed to delete product');
             }
-
-            // Refresh the products list
-            fetchProducts();
-        } catch (err) {
-            console.error('Error deleting product:', err);
-            alert('Failed to delete product. Please try again.');
         }
     };
 
@@ -153,6 +139,6 @@ const ProductList = () => {
             </div>
         </div>
     );
-};
+}
 
 export default ProductList;

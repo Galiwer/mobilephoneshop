@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import UserService from '../../services/UserService';
+import { getYourProfile } from '../../services/UserService';
 import './ProfilePage.css';
 
 function ProfilePage() {
@@ -14,8 +14,7 @@ function ProfilePage() {
 
     const fetchProfileInfo = async () => {
         try {
-            const token = localStorage.getItem('token');
-            const response = await UserService.getYourProfile(token);
+            const response = await getYourProfile();
             setProfileInfo(response.ourUsers);
             setError(null);
         } catch (error) {

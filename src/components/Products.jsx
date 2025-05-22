@@ -1,39 +1,44 @@
-import { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import UserService from '../services/UserService';
-import ProductService from '../services/ProductService.jsx';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { isAuthenticated, isAdmin } from '../services/UserService';
+import { getAllProducts } from '../services/ProductService';
 import config from '../config';
 import './Products.css';
 
-const Products = () => {
+function Products() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Only check admin status
-    const checkAdminStatus = () => {
-      const adminStatus = UserService.isAdmin();
+    const checkAuth = () => {
+      const authStatus = isAuthenticated();
+      const adminStatus = isAdmin();
+      setIsAuthenticated(authStatus);
       setIsAdmin(adminStatus);
     };
 
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const data = await ProductService.getAllProducts();
+        const data = await getAllProducts();
         setProducts(data);
-      } catch (err) {
-        console.error('Error fetching products:', err);
-        setError(err.message || 'Failed to fetch products');
+      } catch (error) {
+        console.error('Error fetching products:', error);
+        setError('Failed to fetch products');
+        if (error.response?.status === 401) {
+          navigate('/login', { state: { from: '/products' } });
+        }
       } finally {
         setLoading(false);
       }
     };
 
-    checkAdminStatus();
+    checkAuth();
     fetchProducts();
   }, []);
 
@@ -142,6 +147,6 @@ const Products = () => {
       )}
     </div>
   );
-};
+}
 
 export default Products;

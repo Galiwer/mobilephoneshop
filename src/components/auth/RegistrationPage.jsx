@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import UserService from '../../services/UserService';
+import { register, isAuthenticated, isAdmin } from '../../services/UserService';
 import './RegistrationPage.css';
 
 function RegistrationPage() {
@@ -18,12 +18,12 @@ function RegistrationPage() {
 
     useEffect(() => {
         // Check for admin access
-        if (!UserService.isAuthenticated()) {
+        if (!isAuthenticated()) {
             navigate("/login");
             return;
         }
 
-        if (!UserService.isAdmin()) {
+        if (!isAdmin()) {
             navigate("/");
             return;
         }
@@ -43,8 +43,7 @@ function RegistrationPage() {
             setLoading(true);
             setError('');
             
-            const token = localStorage.getItem('token');
-            await UserService.register(formData, token);
+            await register(formData);
 
             // Clear the form fields after successful registration
             setFormData({

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import UserService from '../services/UserService';
-import ProductService from '../services/ProductService';
+import { isAuthenticated, isAdmin, logout } from '../services/UserService';
+import { getProductById, validateProduct, updateProduct, getImageUrl } from '../services/ProductService';
 import './EditProduct.css';
 
 const EditProduct = () => {
@@ -13,14 +13,14 @@ const EditProduct = () => {
   const { id } = useParams();
 
   useEffect(() => {
-    if (!UserService.isAuthenticated()) {
+    if (!isAuthenticated()) {
       navigate("/login", { 
         state: { returnUrl: `/EditProduct/${id}` } 
       });
       return;
     }
 
-    if (!UserService.isAdmin()) {
+    if (!isAdmin()) {
       navigate("/");
       return;
     }
@@ -32,14 +32,14 @@ const EditProduct = () => {
     try {
       setLoading(true);
       setError(null);
-      const data = await ProductService.getProductById(id);
+      const data = await getProductById(id);
       setProduct(data);
     } catch (error) {
       console.error('Error fetching product:', error);
       setError(error.message || 'Failed to load product. Please try again.');
       
       if (error.status === 401) {
-        UserService.logout();
+        logout();
         navigate("/login", { 
           state: { returnUrl: `/EditProduct/${id}` } 
         });
@@ -66,10 +66,10 @@ const EditProduct = () => {
       setError(null);
 
       // Validate product data
-      ProductService.validateProduct(product);
+      validateProduct(product);
       
       // Update product
-      await ProductService.updateProduct(id, product);
+      await updateProduct(id, product);
       
       navigate('/ProductList');
     } catch (error) {
@@ -77,7 +77,7 @@ const EditProduct = () => {
       setError(error.message || 'Failed to update product. Please try again.');
       
       if (error.status === 401) {
-        UserService.logout();
+        logout();
         navigate("/login", { 
           state: { returnUrl: `/EditProduct/${id}` } 
         });
@@ -176,7 +176,7 @@ const EditProduct = () => {
             <div className="current-image">
               <p>Current image:</p>
               <img
-                src={ProductService.getImageUrl(product.imageFileName)}
+                src={getImageUrl(product.imageFileName)}
                 alt="Current product"
                 className="preview-image"
               />

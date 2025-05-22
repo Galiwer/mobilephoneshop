@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Banner from '../components/Banner';
 import Footer from '../components/Footer';
-import api from '../services/api';
-import UserService from '../services/UserService';
+import { getProducts } from '../services/api';
+import { isAuthenticated } from '../services/UserService';
 import config from '../config';
 import './Home.css';
 
@@ -17,7 +17,7 @@ const Home = () => {
   useEffect(() => {
     // Check authentication status
     const checkAuth = () => {
-      const authStatus = UserService.isAuthenticated();
+      const authStatus = isAuthenticated();
       setIsAuthenticated(authStatus);
     };
 
@@ -26,7 +26,7 @@ const Home = () => {
       try {
         setLoading(true);
         console.log('Fetching products from:', config.apiUrl);
-        const data = await api.getProducts();
+        const data = await getProducts();
         console.log('Received products:', data);
         // Only take the first 10 products
         setProducts(data.slice(0, 10));

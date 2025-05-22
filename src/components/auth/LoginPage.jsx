@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import UserService from "../../services/UserService";
+import { login } from "../../services/UserService";
 import './LoginPage.css';
 
 function LoginPage() {
@@ -15,8 +15,8 @@ function LoginPage() {
         setError('');
 
         try {
-            const userData = await UserService.login(email, password);
-            console.log('Raw login response:', userData); // Log the entire response
+            const userData = await login(email, password);
+            console.log('Raw login response:', userData);
 
             if (userData.token) {
                 // Clear any existing data
@@ -48,15 +48,8 @@ function LoginPage() {
                 setError(userData.message || 'Login failed. Please try again.');
             }
         } catch (error) {
-            console.error('Login error details:', {
-                error: error,
-                response: error.response,
-                data: error.response?.data
-            });
-            setError(error.response?.data?.message || 'Login failed. Please check your credentials.');
-            setTimeout(() => {
-                setError('');
-            }, 5000);
+            console.error('Login error:', error);
+            setError(error.message || 'An error occurred during login');
         }
     };
 

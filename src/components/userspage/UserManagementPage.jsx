@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import UserService from '../../services/UserService';
+import { isAuthenticated, isAdmin, getAllUsers, deleteUser } from '../../services/UserService';
 import './UserManagementPage.css';
 
 function UserManagementPage() {
@@ -11,12 +11,12 @@ function UserManagementPage() {
 
   useEffect(() => {
     // Check for admin access
-    if (!UserService.isAuthenticated()) {
+    if (!isAuthenticated()) {
       navigate("/login");
       return;
     }
 
-    if (!UserService.isAdmin()) {
+    if (!isAdmin()) {
       navigate("/");
       return;
     }
@@ -28,8 +28,7 @@ function UserManagementPage() {
     try {
       setLoading(true);
       setError(null);
-      const token = localStorage.getItem('token');
-      const response = await UserService.getAllUsers(token);
+      const response = await getAllUsers();
       setUsers(response.ourUsersList || []);
     } catch (error) {
       console.error('Error fetching users:', error);
@@ -47,8 +46,7 @@ function UserManagementPage() {
       const confirmDelete = window.confirm('Are you sure you want to delete this user?');
       if (confirmDelete) {
         setError(null);
-        const token = localStorage.getItem('token');
-        await UserService.deleteUser(userId, token);
+        await deleteUser(userId);
         fetchUsers(); // Refresh the list
       }
     } catch (error) {

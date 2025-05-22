@@ -18,7 +18,7 @@ import AdminFirmware from './components/AdminFirmware';
 import AdminFAQList from './components/AdminFAQList';
 import LoginPage from './components/auth/LoginPage';
 import RegistrationPage from './components/auth/RegistrationPage';
-import UserService from './services/UserService';
+import { isAuthenticated, isAdmin } from './services/UserService';
 import UserManagementPage from './components/userspage/UserManagementPage';
 import ProfilePage from './components/userspage/ProfilePage';
 import UpdateUser from './components/userspage/UpdateUser';
@@ -27,11 +27,11 @@ import EditProduct from './pages/EditProduct';
 
 // Protected Route component
 const ProtectedRoute = ({ children, requireAdmin = false }) => {
-    if (!UserService.isAuthenticated()) {
+    if (!isAuthenticated()) {
         return <Navigate to="/login" />;
     }
 
-    if (requireAdmin && !UserService.isAdmin()) {
+    if (requireAdmin && !isAdmin()) {
         return <Navigate to="/" />;
     }
 

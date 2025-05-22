@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import UserService from '../services/UserService';
-import ProductService from '../services/ProductService';
+import { isAuthenticated, isAdmin, logout } from '../services/UserService';
+import { validateProduct, createProduct } from '../services/ProductService';
 import './CreateProduct.css';
 
 const CreateProduct = () => {
@@ -19,14 +19,14 @@ const CreateProduct = () => {
 
   useEffect(() => {
     // Check for admin access
-    if (!UserService.isAuthenticated()) {
+    if (!isAuthenticated()) {
       navigate("/login", { 
         state: { returnUrl: "/CreateProduct" } 
       });
       return;
     }
 
-    if (!UserService.isAdmin()) {
+    if (!isAdmin()) {
       navigate("/");
       return;
     }
@@ -49,10 +49,10 @@ const CreateProduct = () => {
       setError(null);
 
       // Validate product data
-      ProductService.validateProduct(product);
+      validateProduct(product);
       
       // Create product
-      await ProductService.createProduct(product);
+      await createProduct(product);
       
       navigate('/ProductList');
     } catch (error) {
@@ -61,7 +61,7 @@ const CreateProduct = () => {
       
       // Handle authentication errors
       if (error.status === 401) {
-        UserService.logout();
+        logout();
         navigate("/login", { 
           state: { returnUrl: "/CreateProduct" } 
         });

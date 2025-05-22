@@ -1,7 +1,7 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import './Navibar.css';
 import { useState, useEffect } from 'react';
-import UserService from '../services/UserService';
+import { isAuthenticated, isAdmin, logout } from '../services/UserService';
 
 const Navibar = () => {
   const [menu, setMenu] = useState("Home");
@@ -17,14 +17,14 @@ const Navibar = () => {
   }, [location]);
 
   const checkAuthStatus = () => {
-    const authStatus = UserService.isAuthenticated();
-    const adminStatus = UserService.isAdmin();
+    const authStatus = isAuthenticated();
+    const adminStatus = isAdmin();
     setIsAuthenticated(authStatus);
     setIsAdmin(adminStatus);
   };
 
   const handleLogout = () => {
-    UserService.logout();
+    logout();
     setIsAuthenticated(false);
     setIsAdmin(false);
     setIsMobileMenuOpen(false);
