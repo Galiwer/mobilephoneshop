@@ -2,54 +2,32 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Banner from '../components/Banner';
 import Footer from '../components/Footer';
-import { isAuthenticated } from '../services/UserService';
-import config from '../config';
+import { getAllProducts } from '../services/ProductService';
 import './Home.css';
 
 const Home = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isUserAuthenticated, setIsUserAuthenticated] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check authentication status
-    const checkAuth = () => {
-      const authStatus = isAuthenticated();
-      setIsUserAuthenticated(authStatus);
-    };
-
-    checkAuth();
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`${config.apiUrl}/api/products`);
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        
-        const data = await response.json();
+        const data = await getAllProducts();
         // Only take the first 10 products
         setProducts(data.slice(0, 10));
       } catch (err) {
         console.error('Error fetching products:', err);
-        setError(err.message || 'Failed to fetch products');
-        
-        // Handle authentication errors
-        if (err.status === 401) {
-          setError('Please log in to view products');
-          navigate('/login', { state: { from: '/' } });
-          return;
-        }
+        setError('Failed to fetch products');
       } finally {
         setLoading(false);
       }
     };
 
     fetchProducts();
-  }, [navigate]);
+  }, []);
 
   // Function to format price
   const formatPrice = (price) => {
@@ -63,11 +41,6 @@ const Home = () => {
   const handleImageError = (e) => {
     console.log('Image failed to load:', e.target.src);
     e.target.src = '/api/placeholder/300/200';
-  };
-
-  // Handle login click
-  const handleLoginClick = () => {
-    navigate('/login', { state: { from: '/' } });
   };
 
   return (
@@ -85,7 +58,6 @@ const Home = () => {
             <p>Loading products...</p>
           </div>
         )}
-        
 
         {!loading && !error && products.length === 0 && (
           <div className="no-products">
