@@ -25,8 +25,16 @@ function Products() {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const data = await getAllProducts();
-        setProducts(data);
+        const response = await getAllProducts();
+        console.log('Raw API response:', response);
+
+        // Ensure we have an array of products
+        const productsArray = Array.isArray(response) ? response : 
+                            Array.isArray(response.data) ? response.data :
+                            Array.isArray(response.products) ? response.products : [];
+
+        console.log('Processed products array:', productsArray);
+        setProducts(productsArray);
       } catch (error) {
         console.error('Error fetching products:', error);
         setError('Failed to fetch products');
@@ -40,7 +48,7 @@ function Products() {
 
     checkAuth();
     fetchProducts();
-  }, []);
+  }, [navigate]);
 
   // Function to format price in Rs
   const formatPrice = (price) => {
