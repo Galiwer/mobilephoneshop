@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { isAuthenticated, isAdmin } from '../services/UserService';
-import { getAllFirmware, uploadFirmware, deleteFirmware } from '../api';
+import { getAllFirmware, uploadFirmware, deleteFirmware } from '../services/FirmwareService';
 import './AdminFirmware.css';
 
 const AdminFirmware = () => {
