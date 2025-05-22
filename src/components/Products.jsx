@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import UserService from '../services/UserService';
-import ProductService from '../services/ProductService';
+import ProductService from '../services/ProductService.jsx';
 import config from '../config';
 import './Products.css';
 
