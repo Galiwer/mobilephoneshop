@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from 'react-router-dom';
 import { getAllFaqs } from "../api/faqService";
-import UserService from "../services/UserService";
+import { isAdmin } from "../services/UserService";
 import './FAQList.css';
 
 const FAQList = () => {
@@ -43,7 +43,7 @@ const FAQList = () => {
     <div className="faq-list-container">
       <header>
         <h1>Frequently Asked Questions</h1>
-        {UserService.isAdmin() && (
+        {isAdmin() && (
           <Link to="/admin/faq" className="admin-button">
             Manage FAQs
           </Link>

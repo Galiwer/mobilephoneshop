@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import UserService from '../services/UserService'
+import { isAdmin } from '../services/UserService'
 import './FirmwareManager.css'
-import api from '../api'
+import { getAllBrands, getModelsByBrand, getFirmwareVersions } from '../api'
 
 function FirmwareManager() {
   const [selectedBrand, setSelectedBrand] = useState('')
@@ -12,13 +12,13 @@ function FirmwareManager() {
   const [firmwareVersions, setFirmwareVersions] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
-  const [isAdmin, setIsAdmin] = useState(false)
+  const [isAdminUser, setIsAdminUser] = useState(false)
 
   // Check admin status and fetch brands when component mounts
   useEffect(() => {
     const checkAdminStatus = () => {
-      const adminStatus = UserService.isAdmin();
-      setIsAdmin(adminStatus);
+      const adminStatus = isAdmin();
+      setIsAdminUser(adminStatus);
     };
 
     checkAdminStatus();
@@ -28,7 +28,7 @@ function FirmwareManager() {
   const fetchBrands = async () => {
     try {
       setLoading(true)
-      const response = await api.getAllBrands()
+      const response = await getAllBrands()
       setAvailableBrands(response.data)
       setLoading(false)
     } catch (err) {
@@ -47,7 +47,7 @@ function FirmwareManager() {
     if (brand) {
       try {
         setLoading(true)
-        const response = await api.getModelsByBrand(brand)
+        const response = await getModelsByBrand(brand)
         setAvailableModels(response.data)
         setLoading(false)
       } catch (err) {
@@ -67,7 +67,7 @@ function FirmwareManager() {
     if (selectedBrand && model) {
       try {
         setLoading(true)
-        const response = await api.getFirmwareVersions(selectedBrand, model)
+        const response = await getFirmwareVersions(selectedBrand, model)
         setFirmwareVersions(response.data)
         setLoading(false)
       } catch (err) {
@@ -89,7 +89,7 @@ function FirmwareManager() {
       <header>
         <h1>Download Phone OS</h1>
         <div className="header-actions">
-          {isAdmin && (
+          {isAdminUser && (
             <Link to="/admin/firmware" className="admin-button">
               Manage Firmware
             </Link>

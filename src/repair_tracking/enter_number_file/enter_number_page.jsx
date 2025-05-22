@@ -1,37 +1,37 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import UserService from "../../services/UserService";
-import RepairTrackingService from "../RepairTrackingService";
+import { isAuthenticated, isAdmin, logout, getToken, ROLE_KEY } from "../../services/UserService";
+import { getJobById } from "../RepairTrackingService";
 import "./enter_number_page.css";
 
 export default function EnterNumberPage() {
   const [jobNumber, setJobNumber] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isAdminUser, setIsAdminUser] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     // Check admin status once on component mount
     const checkAdminStatus = () => {
       try {
-        const isAuthenticated = UserService.isAuthenticated();
-        const adminStatus = UserService.isAdmin();
+        const authStatus = isAuthenticated();
+        const adminStatus = isAdmin();
         
         // Log auth state in development
         if (process.env.NODE_ENV === 'development') {
           console.log('Auth state:', {
-            isAuthenticated,
+            isAuthenticated: authStatus,
             isAdmin: adminStatus,
-            token: UserService.getToken() ? 'present' : 'missing',
-            role: localStorage.getItem(UserService.ROLE_KEY)
+            token: getToken() ? 'present' : 'missing',
+            role: localStorage.getItem(ROLE_KEY)
           });
         }
 
-        setIsAdmin(isAuthenticated && adminStatus);
+        setIsAdminUser(authStatus && adminStatus);
       } catch (error) {
         console.error('Error checking admin status:', error);
-        setIsAdmin(false);
+        setIsAdminUser(false);
       }
     };
 
@@ -50,7 +50,7 @@ export default function EnterNumberPage() {
     try {
       setLoading(true);
       setError(null);
-      const jobData = await RepairTrackingService.getJobById(trimmedJobNumber);
+      const jobData = await getJobById(trimmedJobNumber);
 
       if (jobData) {
         navigate("/repair_tracking/display_progress_file/display_progress_page", {
@@ -65,7 +65,7 @@ export default function EnterNumberPage() {
       
       // Handle authentication errors
       if (error.status === 401) {
-        UserService.logout();
+        logout();
         navigate("/login");
       }
     } finally {
@@ -75,7 +75,7 @@ export default function EnterNumberPage() {
 
   const handleAdminAccess = () => {
     try {
-      if (!UserService.isAuthenticated()) {
+      if (!isAuthenticated()) {
         navigate("/login", { 
           state: { 
             returnUrl: "/repair_tracking/progress_update_file/progress_update_page" 
@@ -84,7 +84,7 @@ export default function EnterNumberPage() {
         return;
       }
 
-      if (!UserService.isAdmin()) {
+      if (!isAdmin()) {
         setError("You need administrator privileges to access this page.");
         return;
       }
@@ -149,7 +149,7 @@ export default function EnterNumberPage() {
                 )}
               </button>
               
-              {isAdmin && (
+              {isAdminUser && (
                 <button
                   type="button"
                   className="secondary-button"

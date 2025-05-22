@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import UserService from "../../services/UserService";
-import RepairTrackingService from "../RepairTrackingService";
+import { isAuthenticated, isAdmin } from "../../services/UserService";
+import { getAllJobs, updateJobStatus, deleteJob, createJob, getStatusCode, getStatusText, statusMap } from "../RepairTrackingService";
 import "./progress_update_page.css";
 
 const ProgressUpdate = () => {
@@ -13,12 +13,12 @@ const ProgressUpdate = () => {
 
   useEffect(() => {
     // Check for admin access
-    if (!UserService.isAuthenticated()) {
+    if (!isAuthenticated()) {
       navigate("/login");
       return;
     }
 
-    if (!UserService.isAdmin()) {
+    if (!isAdmin()) {
       navigate("/");
       return;
     }
@@ -29,7 +29,7 @@ const ProgressUpdate = () => {
   const fetchJobs = async () => {
     try {
       setError(null);
-      const data = await RepairTrackingService.getAllJobs();
+      const data = await getAllJobs();
       
       if (!data) {
         throw new Error('No data received from server');
@@ -53,8 +53,8 @@ const ProgressUpdate = () => {
   const handleStatusChange = async (jobNumber, newStatusText) => {
     try {
       setError(null);
-      const statusCode = RepairTrackingService.getStatusCode(newStatusText);
-      await RepairTrackingService.updateJobStatus(jobNumber, statusCode);
+      const statusCode = getStatusCode(newStatusText);
+      await updateJobStatus(jobNumber, statusCode);
       fetchJobs();
     } catch (error) {
       console.error("Error updating status:", error);
@@ -69,7 +69,7 @@ const ProgressUpdate = () => {
     if (window.confirm("Are you sure you want to delete this job?")) {
       try {
         setError(null);
-        await RepairTrackingService.deleteJob(jobNumber);
+        await deleteJob(jobNumber);
         fetchJobs();
       } catch (error) {
         console.error("Error deleting job:", error);
@@ -85,7 +85,7 @@ const ProgressUpdate = () => {
     if (!newJobNumber.trim()) return;
     try {
       setError(null);
-      await RepairTrackingService.createJob({
+      await createJob({
         jobNumber: newJobNumber,
         status: 1,
       });
@@ -164,7 +164,7 @@ const ProgressUpdate = () => {
               {filteredJobs.map((job) => (
                 <tr key={job.jobNumber}>
                   <td>{job.jobNumber}</td>
-                  <td>{RepairTrackingService.getStatusText(job.status)}</td>
+                  <td>{getStatusText(job.status)}</td>
                   <td>
                     {getLastUpdatedDate(job)
                       ? new Date(getLastUpdatedDate(job)).toLocaleString()
@@ -172,13 +172,13 @@ const ProgressUpdate = () => {
                   </td>
                   <td>
                     <select
-                      value={RepairTrackingService.getStatusText(job.status)}
+                      value={getStatusText(job.status)}
                       onChange={(e) =>
                         handleStatusChange(job.jobNumber, e.target.value)
                       }
                       className="status-select"
                     >
-                      {Object.values(RepairTrackingService.statusMap).map(
+                      {Object.values(statusMap).map(
                         (status) => (
                           <option key={status} value={status}>
                             {status}

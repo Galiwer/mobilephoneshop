@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import UserService from '../services/UserService';
-import api from '../api';
+import { isAuthenticated, isAdmin } from '../services/UserService';
+import { getAllFirmware, uploadFirmware, deleteFirmware } from '../api';
 import './AdminFirmware.css';
 
 const AdminFirmware = () => {
@@ -19,12 +19,12 @@ const AdminFirmware = () => {
 
   useEffect(() => {
     // Check for admin access
-    if (!UserService.isAuthenticated()) {
+    if (!isAuthenticated()) {
       navigate("/login");
       return;
     }
 
-    if (!UserService.isAdmin()) {
+    if (!isAdmin()) {
       navigate("/");
       return;
     }
@@ -35,7 +35,7 @@ const AdminFirmware = () => {
   const fetchExistingFirmware = async () => {
     try {
       setLoading(true);
-      const response = await api.getAllFirmware();
+      const response = await getAllFirmware();
       setExistingFirmware(response.data);
       setError(null);
     } catch (err) {
@@ -65,7 +65,7 @@ const AdminFirmware = () => {
         formDataToSend.append(key, formData[key]);
       }
 
-      await api.uploadFirmware(formDataToSend);
+      await uploadFirmware(formDataToSend);
       
       // Reset form
       setFormData({
@@ -94,7 +94,7 @@ const AdminFirmware = () => {
 
     try {
       setLoading(true);
-      await api.deleteFirmware(firmwareId);
+      await deleteFirmware(firmwareId);
       fetchExistingFirmware();
     } catch (err) {
       console.error('Error deleting firmware:', err);

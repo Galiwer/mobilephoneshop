@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import UserService from '../services/UserService';
+import { isAdmin } from '../services/UserService';
 import './Firmware.css';
 
 const Firmware = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploadStatus, setUploadStatus] = useState('');
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isAdminUser, setIsAdminUser] = useState(false);
 
   useEffect(() => {
     // Check admin status
     const checkAdminStatus = () => {
-      const adminStatus = UserService.isAdmin();
-      setIsAdmin(adminStatus);
+      const adminStatus = isAdmin();
+      setIsAdminUser(adminStatus);
     };
 
     checkAdminStatus();
@@ -41,7 +41,7 @@ const Firmware = () => {
     <div className="firmware-container">
       <header className="firmware-header">
         <h2>Firmware Update</h2>
-        {isAdmin && (
+        {isAdminUser && (
           <Link to="/FirmwareManager" className="manage-firmware-button">
             Manage Firmware
           </Link>

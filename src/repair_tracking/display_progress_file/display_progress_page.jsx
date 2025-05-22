@@ -1,6 +1,6 @@
 import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
-import RepairTrackingService from "../RepairTrackingService";
+import { getJobById } from "../RepairTrackingService";
 import "./display_progress_page.css"; // Keep your updated CSS
 
 export default function RepairProgress() {
@@ -26,7 +26,7 @@ export default function RepairProgress() {
   
       try {
         setError(null);
-        const data = await RepairTrackingService.getJobById(jobNumber);
+        const data = await getJobById(jobNumber);
   
         if (data) {
           setStatus(parseInt(data.status)); 
