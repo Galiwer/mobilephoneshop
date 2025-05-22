@@ -5,12 +5,9 @@ const BASE_URL = config.apiUrl + "/api/jobs";
 
 // Status codes and text mapping
 export const statusMap = {
-    'RECEIVED': 'Received',
+    'IN_QUEUE': 'In Queue',
     'IN_PROGRESS': 'In Progress',
-    'PENDING_PARTS': 'Pending Parts',
-    'READY_FOR_PICKUP': 'Ready for Pickup',
-    'COMPLETED': 'Completed',
-    'CANCELLED': 'Cancelled'
+    'COMPLETED': 'Completed'
 };
 
 // Public tracking endpoints
