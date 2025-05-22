@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { isAuthenticated, isAdmin, logout, getToken } from "../../services/UserService";
+import { isAuthenticated, isAdmin } from "../../services/UserService";
 import { getJobById } from "../RepairTrackingService";
 import "./enter_number_page.css";
 
@@ -17,16 +17,6 @@ export default function EnterNumberPage() {
       try {
         const authStatus = isAuthenticated();
         const adminStatus = isAdmin();
-        
-        // Log auth state in development
-        if (process.env.NODE_ENV === 'development') {
-          console.log('Auth state:', {
-            isAuthenticated: authStatus,
-            isAdmin: adminStatus,
-            token: getToken() ? 'present' : 'missing'
-          });
-        }
-
         setIsAdminUser(authStatus && adminStatus);
       } catch (error) {
         console.error('Error checking admin status:', error);
@@ -60,13 +50,7 @@ export default function EnterNumberPage() {
       }
     } catch (error) {
       console.error("Error fetching job data:", error);
-      setError(error.message || "An error occurred while fetching the job data. Please try again.");
-      
-      // Handle authentication errors
-      if (error.status === 401) {
-        logout();
-        navigate("/login");
-      }
+      setError(error.message || "Job number not found or an error occurred. Please check the number and try again.");
     } finally {
       setLoading(false);
     }
@@ -100,6 +84,7 @@ export default function EnterNumberPage() {
       <div className="container">
         <div className="card">
           <h1 className="title">Repair Tracking</h1>
+          <p className="subtitle">Enter your repair job number to track its progress</p>
 
           {error && (
             <div className="error-message" style={{ 

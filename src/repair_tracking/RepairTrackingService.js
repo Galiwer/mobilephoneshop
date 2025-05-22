@@ -25,7 +25,22 @@ export const getJobStatus = async (jobNumber) => {
     }
 };
 
-// Admin endpoints
+// Get job by ID (public endpoint)
+export const getJobById = async (jobNumber) => {
+    try {
+        const res = await fetch(`${BASE_URL}/public/${jobNumber}`);
+        if (!res.ok) {
+            const error = await res.text();
+            throw new Error(error || 'Failed to fetch job');
+        }
+        return res.json();
+    } catch (error) {
+        console.error('Error fetching job:', error);
+        throw error;
+    }
+};
+
+// Admin endpoints (require authentication)
 export const getAllJobs = async () => {
     try {
         const res = await fetch(`${BASE_URL}`, {
@@ -38,22 +53,6 @@ export const getAllJobs = async () => {
         return res.json();
     } catch (error) {
         console.error('Error fetching jobs:', error);
-        throw error;
-    }
-};
-
-export const getJobById = async (jobNumber) => {
-    try {
-        const res = await fetch(`${BASE_URL}/${jobNumber}`, {
-            headers: { 'Authorization': `Bearer ${getToken()}` }
-        });
-        if (!res.ok) {
-            const error = await res.text();
-            throw new Error(error || 'Failed to fetch job');
-        }
-        return res.json();
-    } catch (error) {
-        console.error('Error fetching job:', error);
         throw error;
     }
 };
