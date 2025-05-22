@@ -44,15 +44,18 @@ export const getFirmwareVersions = async (brand, model) => {
 };
 
 // Admin endpoints (require authentication)
-export const uploadFirmware = async (firmwareData) => {
+export const uploadFirmware = async (formData) => {
     try {
         const res = await fetch(`${BASE_URL}/upload`, {
             method: 'POST',
-            headers: { 'Authorization': `Bearer ${getToken()}` },
-            body: firmwareData // FormData should be sent as is
+            headers: { 
+                'Authorization': `Bearer ${getToken()}`
+            },
+            body: formData 
         });
         if (!res.ok) {
-            throw new Error('Failed to upload firmware');
+            const errorData = await res.json();
+            throw new Error(errorData.message || 'Failed to upload firmware');
         }
         return res.json();
     } catch (error) {
