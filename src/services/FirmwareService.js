@@ -10,7 +10,8 @@ export const getAllBrands = async () => {
         if (!res.ok) {
             throw new Error('Failed to fetch brands');
         }
-        return res.json();
+        const data = await res.json();
+        return data;
     } catch (error) {
         console.error('Error fetching brands:', error);
         throw error;
@@ -23,7 +24,8 @@ export const getModelsByBrand = async (brand) => {
         if (!res.ok) {
             throw new Error('Failed to fetch models');
         }
-        return res.json();
+        const data = await res.json();
+        return data;
     } catch (error) {
         console.error('Error fetching models:', error);
         throw error;
@@ -36,7 +38,8 @@ export const getFirmwareVersions = async (brand, model) => {
         if (!res.ok) {
             throw new Error('Failed to fetch firmware versions');
         }
-        return res.json();
+        const data = await res.json();
+        return data;
     } catch (error) {
         console.error('Error fetching firmware versions:', error);
         throw error;
@@ -57,7 +60,8 @@ export const uploadFirmware = async (formData) => {
             const errorData = await res.json();
             throw new Error(errorData.message || 'Failed to upload firmware');
         }
-        return res.json();
+        const data = await res.json();
+        return data;
     } catch (error) {
         console.error('Error uploading firmware:', error);
         throw error;
@@ -72,7 +76,8 @@ export const getAllFirmware = async () => {
         if (!res.ok) {
             throw new Error('Failed to fetch firmware');
         }
-        return res.json();
+        const data = await res.json();
+        return { data }; // Wrap in data property to match component expectations
     } catch (error) {
         console.error('Error fetching firmware:', error);
         throw error;
@@ -88,7 +93,8 @@ export const deleteFirmware = async (id) => {
         if (!res.ok) {
             throw new Error('Failed to delete firmware');
         }
-        return res.json();
+        const data = await res.json();
+        return data;
     } catch (error) {
         console.error('Error deleting firmware:', error);
         throw error;

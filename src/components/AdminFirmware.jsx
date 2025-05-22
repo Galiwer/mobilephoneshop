@@ -35,12 +35,14 @@ const AdminFirmware = () => {
   const fetchExistingFirmware = async () => {
     try {
       setLoading(true);
-      const response = await getAllFirmware();
-      setExistingFirmware(response.data);
       setError(null);
+      const response = await getAllFirmware();
+      console.log('Firmware response:', response); // Debug log
+      setExistingFirmware(response.data || []);
     } catch (err) {
       console.error('Error fetching firmware:', err);
       setError('Failed to load existing firmware. Please try again later.');
+      setExistingFirmware([]); // Reset on error
     } finally {
       setLoading(false);
     }
@@ -61,9 +63,11 @@ const AdminFirmware = () => {
       setError(null);
 
       const formDataToSend = new FormData();
-      for (const key in formData) {
-        formDataToSend.append(key, formData[key]);
-      }
+      formDataToSend.append('brand', formData.brand);
+      formDataToSend.append('model', formData.model);
+      formDataToSend.append('version', formData.version);
+      formDataToSend.append('releaseNotes', formData.releaseNotes || '');
+      formDataToSend.append('firmwareFile', formData.firmwareFile);
 
       await uploadFirmware(formDataToSend);
       
@@ -76,12 +80,18 @@ const AdminFirmware = () => {
         firmwareFile: null
       });
 
+      // Reset file input
+      const fileInput = document.getElementById('firmwareFile');
+      if (fileInput) {
+        fileInput.value = '';
+      }
+
       // Refresh firmware list
-      fetchExistingFirmware();
+      await fetchExistingFirmware();
 
     } catch (err) {
       console.error('Error uploading firmware:', err);
-      setError('Failed to upload firmware. Please try again.');
+      setError(err.message || 'Failed to upload firmware. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -94,11 +104,12 @@ const AdminFirmware = () => {
 
     try {
       setLoading(true);
+      setError(null);
       await deleteFirmware(firmwareId);
-      fetchExistingFirmware();
+      await fetchExistingFirmware();
     } catch (err) {
       console.error('Error deleting firmware:', err);
-      setError('Failed to delete firmware. Please try again.');
+      setError(err.message || 'Failed to delete firmware. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -212,6 +223,7 @@ const AdminFirmware = () => {
                       <button
                         className="delete-button"
                         onClick={() => handleDelete(firmware.id)}
+                        disabled={loading}
                       >
                         Delete
                       </button>
