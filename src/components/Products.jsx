@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { isAuthenticated, isAdmin } from '../services/UserService';
+import { isAdmin } from '../services/UserService';
 import { getAllProducts } from '../api/productService';
 import config from '../config';
 import './Products.css';
@@ -10,15 +10,12 @@ function Products() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
-  const [isUserAuthenticated, setIsUserAuthenticated] = useState(false);
   const [isUserAdmin, setIsUserAdmin] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const checkAuth = () => {
-      const authStatus = isAuthenticated();
+    const checkAdmin = () => {
       const adminStatus = isAdmin();
-      setIsUserAuthenticated(authStatus);
       setIsUserAdmin(adminStatus);
     };
 
@@ -38,15 +35,12 @@ function Products() {
       } catch (error) {
         console.error('Error fetching products:', error);
         setError('Failed to fetch products');
-        if (error.response?.status === 401) {
-          navigate('/login', { state: { from: '/products' } });
-        }
       } finally {
         setLoading(false);
       }
     };
 
-    checkAuth();
+    checkAdmin();
     fetchProducts();
   }, [navigate]);
 
