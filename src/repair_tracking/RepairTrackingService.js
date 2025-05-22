@@ -5,19 +5,38 @@ const BASE_URL = config.apiUrl + "/api/jobs";
 
 // Status codes and text mapping
 export const statusMap = {
-    1: 'In Queue',
-    2: 'Processing',
-    3: 'Completed'
+    'RECEIVED': 'Received',
+    'IN_PROGRESS': 'In Progress',
+    'PENDING_PARTS': 'Pending Parts',
+    'READY_FOR_PICKUP': 'Ready for Pickup',
+    'COMPLETED': 'Completed',
+    'CANCELLED': 'Cancelled'
 };
 
-// Job Management
+// Public tracking endpoints
+export const getJobStatus = async (jobNumber) => {
+    try {
+        const res = await fetch(`${BASE_URL}/track/${jobNumber}`);
+        if (!res.ok) {
+            const error = await res.text();
+            throw new Error(error || 'Failed to fetch job status');
+        }
+        return res.json();
+    } catch (error) {
+        console.error('Error fetching job status:', error);
+        throw error;
+    }
+};
+
+// Admin endpoints
 export const getAllJobs = async () => {
     try {
         const res = await fetch(`${BASE_URL}`, {
             headers: { 'Authorization': `Bearer ${getToken()}` }
         });
         if (!res.ok) {
-            throw new Error('Failed to fetch jobs');
+            const error = await res.text();
+            throw new Error(error || 'Failed to fetch jobs');
         }
         return res.json();
     } catch (error) {
@@ -32,7 +51,8 @@ export const getJobById = async (jobNumber) => {
             headers: { 'Authorization': `Bearer ${getToken()}` }
         });
         if (!res.ok) {
-            throw new Error('Failed to fetch job');
+            const error = await res.text();
+            throw new Error(error || 'Failed to fetch job');
         }
         return res.json();
     } catch (error) {
@@ -43,7 +63,7 @@ export const getJobById = async (jobNumber) => {
 
 export const createJob = async (jobData) => {
     try {
-        const res = await fetch(BASE_URL, {
+        const res = await fetch(`${BASE_URL}/create`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -52,7 +72,8 @@ export const createJob = async (jobData) => {
             body: JSON.stringify(jobData)
         });
         if (!res.ok) {
-            throw new Error('Failed to create job');
+            const error = await res.text();
+            throw new Error(error || 'Failed to create job');
         }
         return res.json();
     } catch (error) {
@@ -63,7 +84,7 @@ export const createJob = async (jobData) => {
 
 export const updateJobStatus = async (jobNumber, status) => {
     try {
-        const res = await fetch(`${BASE_URL}/${jobNumber}/status`, {
+        const res = await fetch(`${BASE_URL}/update/${jobNumber}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -72,7 +93,8 @@ export const updateJobStatus = async (jobNumber, status) => {
             body: JSON.stringify({ status })
         });
         if (!res.ok) {
-            throw new Error('Failed to update job status');
+            const error = await res.text();
+            throw new Error(error || 'Failed to update job status');
         }
         return res.json();
     } catch (error) {
@@ -83,12 +105,13 @@ export const updateJobStatus = async (jobNumber, status) => {
 
 export const deleteJob = async (jobNumber) => {
     try {
-        const res = await fetch(`${BASE_URL}/${jobNumber}`, {
+        const res = await fetch(`${BASE_URL}/delete/${jobNumber}`, {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${getToken()}` }
         });
         if (!res.ok) {
-            throw new Error('Failed to delete job');
+            const error = await res.text();
+            throw new Error(error || 'Failed to delete job');
         }
         return res.json();
     } catch (error) {
@@ -97,8 +120,9 @@ export const deleteJob = async (jobNumber) => {
     }
 };
 
+// Helper functions
 export const getStatusCode = (statusText) => {
-    return Object.entries(statusMap).find(([code, text]) => text === statusText)?.[0] || 1;
+    return Object.entries(statusMap).find(([code, text]) => text === statusText)?.[0];
 };
 
 export const getStatusText = (statusCode) => {
