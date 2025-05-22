@@ -13,9 +13,10 @@ const FAQList = () => {
   useEffect(() => {
     const fetchFaqs = async () => {
       try {
+        setLoading(true);
+        setError(null);
         const data = await getAllFaqs();
-        const publishedFaqs = data.filter(f => f.status === "Published" && f.active);
-        setFaqs(publishedFaqs);
+        setFaqs(Array.isArray(data) ? data : []);
         setLoading(false);
       } catch (err) {
         setError('Failed to load FAQs. Please try again later.');
@@ -32,11 +33,19 @@ const FAQList = () => {
   };
 
   if (loading) {
-    return <div className="loading">Loading FAQs...</div>;
-  }
-
-  if (error) {
-    return <div className="error-message">{error}</div>;
+    return (
+      <div className="faq-list-container">
+        <header>
+          <h1>Frequently Asked Questions</h1>
+          {isAdmin() && (
+            <Link to="/admin/faq" className="admin-button">
+              Manage FAQs
+            </Link>
+          )}
+        </header>
+        <div className="loading">Loading FAQs...</div>
+      </div>
+    );
   }
 
   return (
@@ -54,35 +63,37 @@ const FAQList = () => {
         <p>Find answers to common questions about our products and services.</p>
       </div>
 
-      <div className="faq-list">
-        {faqs.map((faq, index) => (
-          <div key={faq.id} className="faq-item">
-            <div
-              className="faq-question"
-              onClick={() => toggleFAQ(index)}
-            >
-              <h3>{faq.question}</h3>
-              <span className="faq-icon">
-                {openIndex === index ? '−' : '+'}
-              </span>
-            </div>
-            {openIndex === index && (
-              <div className="faq-answer">
-                <p>{faq.answer}</p>
-                {faq.category && (
-                  <span className="faq-category">Category: {faq.category}</span>
-                )}
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
+      {error && <div className="error-message">{error}</div>}
 
-      {faqs.length === 0 && (
-        <div className="no-faqs">
-          <p>No FAQs available at the moment.</p>
-        </div>
-      )}
+      <div className="faq-list">
+        {faqs.length > 0 ? (
+          faqs.map((faq, index) => (
+            <div key={faq.id} className="faq-item">
+              <div
+                className="faq-question"
+                onClick={() => toggleFAQ(index)}
+              >
+                <h3>{faq.question}</h3>
+                <span className="faq-icon">
+                  {openIndex === index ? '−' : '+'}
+                </span>
+              </div>
+              {openIndex === index && (
+                <div className="faq-answer">
+                  <p>{faq.answer}</p>
+                  {faq.category && (
+                    <span className="faq-category">Category: {faq.category}</span>
+                  )}
+                </div>
+              )}
+            </div>
+          ))
+        ) : (
+          <div className="no-faqs">
+            <p>No FAQs available at the moment.</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
