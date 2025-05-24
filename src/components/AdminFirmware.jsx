@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { isAuthenticated, isAdmin } from '../services/UserService';
-import { getAllFirmware, uploadFirmware, deleteFirmware } from '../services/FirmwareService';
+import { getAllFirmware, uploadFirmware, deleteFirmware, downloadFirmware } from '../services/FirmwareService';
 import './AdminFirmware.css';
 
 const AdminFirmware = () => {
@@ -133,6 +133,31 @@ const AdminFirmware = () => {
     }
   };
 
+  const handleDownload = async (firmwareId) => {
+    try {
+      setLoading(true);
+      setError(null);
+      const downloadData = await downloadFirmware(firmwareId);
+
+      if (downloadData.type === 'link') {
+        window.open(downloadData.url, '_blank');
+      } else if (downloadData.type === 'file') {
+        const a = document.createElement('a');
+        a.href = downloadData.url;
+        a.download = downloadData.fileName;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(downloadData.url);
+        document.body.removeChild(a);
+      }
+    } catch (err) {
+      console.error('Error downloading firmware:', err);
+      setError('Failed to download firmware. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="admin-firmware-container">
       <header>
@@ -255,48 +280,44 @@ const AdminFirmware = () => {
 
       {error && <div className="error-message">{error}</div>}
 
-      <section className="existing-firmware-section">
+      <section className="existing-firmware">
         <h2>Existing Firmware</h2>
-        {loading ? (
-          <div className="loading">Loading firmware data...</div>
-        ) : existingFirmware.length === 0 ? (
-          <div className="no-data">No firmware entries found</div>
-        ) : (
-          <div className="firmware-table-container">
-            <table className="firmware-table">
-              <thead>
-                <tr>
-                  <th>Brand</th>
-                  <th>Model</th>
-                  <th>Version</th>
-                  <th>Type</th>
-                  <th>Upload Date</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {existingFirmware.map((firmware) => (
-                  <tr key={firmware.id}>
-                    <td>{firmware.brand}</td>
-                    <td>{firmware.model}</td>
-                    <td>{firmware.version}</td>
-                    <td>{firmware.firmwareLink ? 'Drive Link' : 'File'}</td>
-                    <td>{new Date(firmware.uploadDate).toLocaleDateString()}</td>
-                    <td>
-                      <button
-                        className="delete-button"
-                        onClick={() => handleDelete(firmware.id)}
-                        disabled={loading}
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+        {loading && <div className="loading">Loading...</div>}
+        {error && <div className="error-message">{error}</div>}
+        
+        <div className="firmware-list">
+          {existingFirmware.map((firmware) => (
+            <div key={firmware.id} className="firmware-item">
+              <div className="firmware-details">
+                <h3>{firmware.brand} {firmware.model}</h3>
+                <p className="version">Version: {firmware.version}</p>
+                <p className="type">Type: {firmware.firmwareLink ? 'Google Drive Link' : 'Uploaded File'}</p>
+                {firmware.releaseNotes && (
+                  <p className="notes">{firmware.releaseNotes}</p>
+                )}
+                <p className="upload-date">
+                  Uploaded: {new Date(firmware.uploadDate).toLocaleDateString()}
+                </p>
+              </div>
+              <div className="firmware-actions">
+                <button
+                  onClick={() => handleDownload(firmware.id)}
+                  className="download-button"
+                  disabled={loading}
+                >
+                  Download
+                </button>
+                <button
+                  onClick={() => handleDelete(firmware.id)}
+                  className="delete-button"
+                  disabled={loading}
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
       </section>
     </div>
   );

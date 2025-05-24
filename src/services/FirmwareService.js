@@ -1,45 +1,27 @@
-import { getToken } from './UserService';
-import config from '../config';
+import axios from 'axios';
+import { API_BASE_URL } from '../config';
 
-const BASE_URL = config.apiUrl + "/api/firmware";
+const FIRMWARE_API = `${API_BASE_URL}/api/firmware`;
 
 // Public endpoints
 export const getAllBrands = async () => {
-    try {
-        const res = await fetch(`${BASE_URL}/brands`);
-        if (!res.ok) {
-            throw new Error('Failed to fetch brands');
-        }
-        const data = await res.json();
-        return data;
-    } catch (error) {
-        console.error('Error fetching brands:', error);
-        throw error;
-    }
+    const response = await axios.get(`${FIRMWARE_API}/brands`);
+    return response.data;
 };
 
 export const getModelsByBrand = async (brand) => {
-    try {
-        const res = await fetch(`${BASE_URL}/models/${brand}`);
-        if (!res.ok) {
-            throw new Error('Failed to fetch models');
-        }
-        const data = await res.json();
-        return data;
-    } catch (error) {
-        console.error('Error fetching models:', error);
-        throw error;
-    }
+    const response = await axios.get(`${FIRMWARE_API}/models/${brand}`);
+    return response.data;
 };
 
 export const getFirmwareVersions = async (brand, model) => {
     try {
-        const res = await fetch(`${BASE_URL}/view/${brand}/${model}`);
-        if (!res.ok) {
-            throw new Error('Failed to fetch firmware versions');
-        }
-        const data = await res.json();
-        return data;
+        const response = await axios.get(`${FIRMWARE_API}/admin/list`);
+        return response.data.filter(firmware => 
+            firmware.brand === brand && 
+            firmware.model === model &&
+            firmware.active
+        );
     } catch (error) {
         console.error('Error fetching firmware versions:', error);
         throw error;
@@ -47,104 +29,48 @@ export const getFirmwareVersions = async (brand, model) => {
 };
 
 // Admin endpoints (require authentication)
-export const uploadFirmware = async (formData) => {
-    try {
-        const res = await fetch(`${BASE_URL}/upload`, {
-            method: 'POST',
-            headers: { 
-                'Authorization': `Bearer ${getToken()}`
-            },
-            body: formData 
-        });
-        if (!res.ok) {
-            const errorData = await res.json();
-            throw new Error(errorData.message || 'Failed to upload firmware');
+export const uploadFirmware = (formData) => {
+    return axios.post(`${FIRMWARE_API}/upload`, formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
         }
-        const data = await res.json();
-        return data;
-    } catch (error) {
-        console.error('Error uploading firmware:', error);
-        throw error;
-    }
+    });
 };
 
-export const getAllFirmware = async () => {
-    try {
-        const response = await fetch(`${BASE_URL}/admin/list`, {
-            headers: {
-                'Authorization': `Bearer ${getToken()}`
-            }
-        });
-        if (!response.ok) {
-            throw new Error('Failed to fetch firmware list');
-        }
-        return await response.json();
-    } catch (error) {
-        console.error('Error fetching firmware:', error);
-        throw error;
-    }
+export const getAllFirmware = () => {
+    return axios.get(`${FIRMWARE_API}/admin/list`);
 };
 
-export const deleteFirmware = async (firmwareId) => {
-    try {
-        const response = await fetch(`${BASE_URL}/delete/${firmwareId}`, {
-            method: 'DELETE',
-            headers: {
-                'Authorization': `Bearer ${getToken()}`
-            }
-        });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || 'Failed to delete firmware');
-        }
-
-        return await response.json();
-    } catch (error) {
-        console.error('Error deleting firmware:', error);
-        throw error;
-    }
+export const deleteFirmware = (id) => {
+    return axios.delete(`${FIRMWARE_API}/delete/${id}`);
 };
 
-export const downloadFirmware = async (firmwareId) => {
+export const downloadFirmware = async (id) => {
     try {
-        const response = await fetch(`${BASE_URL}/download/${firmwareId}`, {
-            headers: {
-                'Authorization': `Bearer ${getToken()}`
-            }
-        });
+        const response = await axios.get(`${FIRMWARE_API}/download/${id}`);
+        const data = response.data;
 
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || 'Failed to download firmware');
+        if (data.type === 'link') {
+            // For Google Drive links, return the URL for external opening
+            return {
+                type: 'link',
+                url: data.url,
+                fileName: data.fileName
+            };
+        } else if (data.type === 'file') {
+            // For files, initiate download
+            const fileResponse = await axios.get(data.url, {
+                responseType: 'blob'
+            });
+            const downloadUrl = window.URL.createObjectURL(new Blob([fileResponse.data]));
+            return {
+                type: 'file',
+                url: downloadUrl,
+                fileName: data.fileName
+            };
+        } else {
+            throw new Error('Invalid firmware type received');
         }
-
-        // Check if it's a Google Drive link
-        const contentType = response.headers.get('content-type');
-        if (contentType && contentType.includes('application/json')) {
-            const data = await response.json();
-            if (data.firmwareLink) {
-                // Redirect to Google Drive link
-                window.open(data.firmwareLink, '_blank');
-                return;
-            }
-        }
-
-        // Handle file download
-        const blob = await response.blob();
-        const contentDisposition = response.headers.get('content-disposition');
-        const filename = contentDisposition
-            ? contentDisposition.split('filename=')[1].replace(/"/g, '')
-            : 'firmware.bin';
-
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(a);
     } catch (error) {
         console.error('Error downloading firmware:', error);
         throw error;

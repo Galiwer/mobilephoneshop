@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { isAdmin } from '../services/UserService'
 import './FirmwareManager.css'
-import { getAllBrands, getModelsByBrand, getFirmwareVersions } from '../services/FirmwareService'
+import { getAllBrands, getModelsByBrand, getFirmwareVersions, downloadFirmware } from '../services/FirmwareService'
 
 function FirmwareManager() {
   const [selectedBrand, setSelectedBrand] = useState('')
@@ -83,12 +83,36 @@ function FirmwareManager() {
     }
   }
 
-  const handleDownload = (downloadUrl) => {
-    if (!downloadUrl) {
-      setError('Download link not available')
+  const handleDownload = async (firmwareId) => {
+    if (!firmwareId) {
+      setError('Download not available')
       return
     }
-    window.open(downloadUrl, '_blank')
+
+    try {
+      setLoading(true)
+      setError(null)
+      const downloadData = await downloadFirmware(firmwareId)
+
+      if (downloadData.type === 'link') {
+        // For Google Drive links, open in new tab
+        window.open(downloadData.url, '_blank')
+      } else if (downloadData.type === 'file') {
+        // For direct file downloads
+        const a = document.createElement('a')
+        a.href = downloadData.url
+        a.download = downloadData.fileName
+        document.body.appendChild(a)
+        a.click()
+        window.URL.revokeObjectURL(downloadData.url)
+        document.body.removeChild(a)
+      }
+    } catch (err) {
+      console.error('Error downloading firmware:', err)
+      setError('Failed to download firmware. Please try again later.')
+    } finally {
+      setLoading(false)
+    }
   }
   
   return (
@@ -176,17 +200,17 @@ function FirmwareManager() {
               <div key={index} className="firmware-item">
                 <div className="firmware-info">
                   <span className="firmware-version">Version {firmware.version}</span>
-                  <span className="firmware-date">{firmware.releaseDate}</span>
+                  <span className="firmware-type">{firmware.firmwareLink ? 'Google Drive' : 'Direct Download'}</span>
                   {firmware.releaseNotes && (
                     <span className="firmware-notes">{firmware.releaseNotes}</span>
                   )}
                 </div>
                 <button 
-                  onClick={() => handleDownload(firmware.downloadUrl)} 
+                  onClick={() => handleDownload(firmware.id)} 
                   className="download-button"
-                  disabled={!firmware.downloadUrl}
+                  disabled={loading}
                 >
-                  Download
+                  {loading ? 'Downloading...' : 'Download'}
                 </button>
               </div>
             ))}
