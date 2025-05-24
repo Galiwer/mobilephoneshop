@@ -112,6 +112,8 @@
   cursor: pointer;
   transition: all 0.3s ease;
   border: none;
+  min-width: 100px;
+  width: auto;
 }
 
 .nav-login-cart .login-button {
@@ -158,6 +160,7 @@
   padding: calc(5px + 0.2vw);
   border-radius: 8px;
   transition: all 0.3s ease;
+  z-index: 1001;
 }
 
 .mobile-menu-button:hover {
@@ -177,8 +180,9 @@
   backdrop-filter: blur(10px);
   box-shadow: 2px 0 20px rgba(0, 0, 0, 0.1);
   transition: left 0.3s ease;
-  z-index: 1000;
+  z-index: 1002;
   padding: calc(20px + 1vw);
+  overflow-y: auto;
 }
 
 .mobile-menu-container.active {
@@ -194,7 +198,7 @@
   height: 100%;
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(3px);
-  z-index: 999;
+  z-index: 1001;
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -219,7 +223,8 @@
   flex-direction: column;
   align-items: flex-start;
   gap: calc(15px + 0.8vw);
-  margin-top: calc(50px + 2vw);
+  margin-top: calc(30px + 2vw);
+  margin-bottom: calc(30px + 2vw);
 }
 
 .mobile-menu-container .nav-menu li {
@@ -238,15 +243,22 @@
 }
 
 .mobile-menu-container .nav-login-cart {
-  margin-top: calc(30px + 1.5vw);
+  margin-top: auto;
   flex-direction: column;
   gap: calc(10px + 0.5vw);
+  width: 100%;
 }
 
 .mobile-menu-container .nav-login-cart button {
   width: 100%;
-  padding: calc(10px + 0.4vw);
+  padding: calc(12px + 0.4vw);
   font-size: calc(1rem + 0.2vw);
+  margin: 0;
+}
+
+.mobile-menu-container .nav-login-cart .profile-button,
+.mobile-menu-container .nav-login-cart .logout-button {
+  width: 100%;
 }
 
 /* Responsive styles */
@@ -269,6 +281,14 @@
 
   .nav-logo {
     margin: 0 auto;
+  }
+
+  .mobile-menu-container .nav-login-cart {
+    position: relative;
+    z-index: 1003;
+    padding: calc(15px + 0.5vw);
+    background: rgba(255, 255, 255, 0.98);
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
   }
 }
 
