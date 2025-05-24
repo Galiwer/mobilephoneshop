@@ -31,11 +31,10 @@ const Home = () => {
 
   // Function to format price
   const formatPrice = (price) => {
-    return new Intl.NumberFormat('en-LKR', {
-      style: 'currency',
-      currency: 'LKR',
+    const formattedNumber = new Intl.NumberFormat('en-US', {
       maximumFractionDigits: 0
     }).format(price);
+    return `LKR ${formattedNumber}`;
   };
 
   // Handle image error
