@@ -3,6 +3,11 @@ import { API_BASE_URL } from '../config';
 
 const FIRMWARE_API = `${API_BASE_URL}/api/firmware`;
 
+const getAuthHeader = () => {
+    const token = localStorage.getItem('token');
+    return token ? { Authorization: `Bearer ${token}` } : {};
+};
+
 // Public endpoints
 export const getAllBrands = async () => {
     const response = await axios.get(`${FIRMWARE_API}/brands`);
@@ -16,7 +21,9 @@ export const getModelsByBrand = async (brand) => {
 
 export const getFirmwareVersions = async (brand, model) => {
     try {
-        const response = await axios.get(`${FIRMWARE_API}/admin/list`);
+        const response = await axios.get(`${FIRMWARE_API}/admin/list`, {
+            headers: getAuthHeader()
+        });
         return response.data.filter(firmware => 
             firmware.brand === brand && 
             firmware.model === model &&
@@ -32,22 +39,29 @@ export const getFirmwareVersions = async (brand, model) => {
 export const uploadFirmware = (formData) => {
     return axios.post(`${FIRMWARE_API}/upload`, formData, {
         headers: {
+            ...getAuthHeader(),
             'Content-Type': 'multipart/form-data'
         }
     });
 };
 
 export const getAllFirmware = () => {
-    return axios.get(`${FIRMWARE_API}/admin/list`);
+    return axios.get(`${FIRMWARE_API}/admin/list`, {
+        headers: getAuthHeader()
+    });
 };
 
 export const deleteFirmware = (id) => {
-    return axios.delete(`${FIRMWARE_API}/delete/${id}`);
+    return axios.delete(`${FIRMWARE_API}/delete/${id}`, {
+        headers: getAuthHeader()
+    });
 };
 
 export const downloadFirmware = async (id) => {
     try {
-        const response = await axios.get(`${FIRMWARE_API}/download/${id}`);
+        const response = await axios.get(`${FIRMWARE_API}/download/${id}`, {
+            headers: getAuthHeader()
+        });
         const data = response.data;
 
         if (data.type === 'link') {
@@ -60,6 +74,7 @@ export const downloadFirmware = async (id) => {
         } else if (data.type === 'file') {
             // For files, initiate download
             const fileResponse = await axios.get(data.url, {
+                headers: getAuthHeader(),
                 responseType: 'blob'
             });
             const downloadUrl = window.URL.createObjectURL(new Blob([fileResponse.data]));
