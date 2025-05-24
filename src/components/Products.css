@@ -38,15 +38,20 @@
 .manage-products-button {
   display: inline-block;
   padding: 0.75rem 1.5rem;
-  background-color: #007bff;
+  background: linear-gradient(135deg, #7b1fa2, #9c27b0);
   color: white;
   text-decoration: none;
-  border-radius: 4px;
-  transition: background-color 0.2s;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: calc(0.9rem + 0.2vw);
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(123, 31, 162, 0.2);
 }
 
 .manage-products-button:hover {
-  background-color: #0056b3;
+  background: linear-gradient(135deg, #9c27b0, #7b1fa2);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(123, 31, 162, 0.3);
   text-decoration: none;
   color: white;
 }
