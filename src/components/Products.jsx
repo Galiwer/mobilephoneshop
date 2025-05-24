@@ -42,7 +42,7 @@ function Products() {
 
     checkAdmin();
     fetchProducts();
-  }, [navigate]);
+  }, []);
 
   // Function to format price in Rs
   const formatPrice = (price) => {
@@ -66,9 +66,10 @@ function Products() {
     e.target.src = '/api/placeholder/300/300';
   };
 
-  // Handle product click
-  const handleProductClick = (productId) => {
-    navigate(`/product/${productId}`);
+  // Handle manage products click
+  const handleManageProducts = (e) => {
+    e.preventDefault();
+    navigate('/productlist');
   };
 
   return (
@@ -78,7 +79,7 @@ function Products() {
         {isUserAdmin && (
           <button 
             className="manage-products-button"
-            onClick={() => navigate('/productlist')}
+            onClick={handleManageProducts}
           >
             Manage Products
           </button>
@@ -113,14 +114,16 @@ function Products() {
             <div 
               className="product-card" 
               key={product.id}
-              onClick={() => handleProductClick(product.id)}
             >
               <div className="product-image-container">
                 <img
                   src={`${config.imageUrl}/${product.imageFileName}`}
                   alt={product.name}
                   className="product-image"
-                  onClick={() => setSelectedImage(`${config.imageUrl}/${product.imageFileName}`)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setSelectedImage(`${config.imageUrl}/${product.imageFileName}`);
+                  }}
                   onError={handleImageError}
                 />
               </div>
