@@ -70,33 +70,83 @@ export const uploadFirmware = async (formData) => {
 
 export const getAllFirmware = async () => {
     try {
-        const res = await fetch(`${BASE_URL}/admin/list`, {
-            headers: { 'Authorization': `Bearer ${getToken()}` }
+        const response = await fetch(`${BASE_URL}/admin/list`, {
+            headers: {
+                'Authorization': `Bearer ${getToken()}`
+            }
         });
-        if (!res.ok) {
-            throw new Error('Failed to fetch firmware');
+        if (!response.ok) {
+            throw new Error('Failed to fetch firmware list');
         }
-        const data = await res.json();
-        return { data }; // Wrap in data property to match component expectations
+        return await response.json();
     } catch (error) {
         console.error('Error fetching firmware:', error);
         throw error;
     }
 };
 
-export const deleteFirmware = async (id) => {
+export const deleteFirmware = async (firmwareId) => {
     try {
-        const res = await fetch(`${BASE_URL}/delete/${id}`, {
+        const response = await fetch(`${BASE_URL}/delete/${firmwareId}`, {
             method: 'DELETE',
-            headers: { 'Authorization': `Bearer ${getToken()}` }
+            headers: {
+                'Authorization': `Bearer ${getToken()}`
+            }
         });
-        if (!res.ok) {
-            throw new Error('Failed to delete firmware');
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Failed to delete firmware');
         }
-        const data = await res.json();
-        return data;
+
+        return await response.json();
     } catch (error) {
         console.error('Error deleting firmware:', error);
+        throw error;
+    }
+};
+
+export const downloadFirmware = async (firmwareId) => {
+    try {
+        const response = await fetch(`${BASE_URL}/download/${firmwareId}`, {
+            headers: {
+                'Authorization': `Bearer ${getToken()}`
+            }
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Failed to download firmware');
+        }
+
+        // Check if it's a Google Drive link
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+            const data = await response.json();
+            if (data.firmwareLink) {
+                // Redirect to Google Drive link
+                window.open(data.firmwareLink, '_blank');
+                return;
+            }
+        }
+
+        // Handle file download
+        const blob = await response.blob();
+        const contentDisposition = response.headers.get('content-disposition');
+        const filename = contentDisposition
+            ? contentDisposition.split('filename=')[1].replace(/"/g, '')
+            : 'firmware.bin';
+
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+    } catch (error) {
+        console.error('Error downloading firmware:', error);
         throw error;
     }
 }; 

@@ -9,12 +9,14 @@ const AdminFirmware = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [existingFirmware, setExistingFirmware] = useState([]);
+  const [uploadType, setUploadType] = useState('file'); // 'file' or 'link'
   const [formData, setFormData] = useState({
     brand: '',
     model: '',
     version: '',
     releaseNotes: '',
-    firmwareFile: null
+    firmwareFile: null,
+    firmwareLink: ''
   });
 
   useEffect(() => {
@@ -37,12 +39,12 @@ const AdminFirmware = () => {
       setLoading(true);
       setError(null);
       const response = await getAllFirmware();
-      console.log('Firmware response:', response); // Debug log
+      console.log('Firmware response:', response);
       setExistingFirmware(response.data || []);
     } catch (err) {
       console.error('Error fetching firmware:', err);
       setError('Failed to load existing firmware. Please try again later.');
-      setExistingFirmware([]); // Reset on error
+      setExistingFirmware([]);
     } finally {
       setLoading(false);
     }
@@ -56,6 +58,11 @@ const AdminFirmware = () => {
     }));
   };
 
+  const validateGoogleDriveLink = (link) => {
+    // Basic validation for Google Drive link
+    return link.includes('drive.google.com') && link.includes('/file/d/');
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -67,7 +74,17 @@ const AdminFirmware = () => {
       formDataToSend.append('model', formData.model);
       formDataToSend.append('version', formData.version);
       formDataToSend.append('releaseNotes', formData.releaseNotes || '');
-      formDataToSend.append('firmwareFile', formData.firmwareFile);
+
+      if (uploadType === 'file' && formData.firmwareFile) {
+        formDataToSend.append('firmwareFile', formData.firmwareFile);
+      } else if (uploadType === 'link' && formData.firmwareLink) {
+        if (!validateGoogleDriveLink(formData.firmwareLink)) {
+          throw new Error('Please enter a valid Google Drive link');
+        }
+        formDataToSend.append('firmwareLink', formData.firmwareLink);
+      } else {
+        throw new Error('Please provide either a firmware file or a Google Drive link');
+      }
 
       await uploadFirmware(formDataToSend);
       
@@ -77,7 +94,8 @@ const AdminFirmware = () => {
         model: '',
         version: '',
         releaseNotes: '',
-        firmwareFile: null
+        firmwareFile: null,
+        firmwareLink: ''
       });
 
       // Reset file input
@@ -175,16 +193,59 @@ const AdminFirmware = () => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="firmwareFile">Firmware File</label>
-            <input
-              type="file"
-              id="firmwareFile"
-              name="firmwareFile"
-              onChange={handleInputChange}
-              accept=".bin,.hex"
-              required
-            />
+            <label>Upload Type</label>
+            <div className="upload-type-selector">
+              <label>
+                <input
+                  type="radio"
+                  name="uploadType"
+                  value="file"
+                  checked={uploadType === 'file'}
+                  onChange={(e) => setUploadType(e.target.value)}
+                />
+                Upload File
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="uploadType"
+                  value="link"
+                  checked={uploadType === 'link'}
+                  onChange={(e) => setUploadType(e.target.value)}
+                />
+                Google Drive Link
+              </label>
+            </div>
           </div>
+
+          {uploadType === 'file' ? (
+            <div className="form-group">
+              <label htmlFor="firmwareFile">Firmware File</label>
+              <input
+                type="file"
+                id="firmwareFile"
+                name="firmwareFile"
+                onChange={handleInputChange}
+                accept=".bin,.hex,.zip"
+                required={uploadType === 'file'}
+              />
+              <small>Accepted formats: .bin, .hex, .zip</small>
+            </div>
+          ) : (
+            <div className="form-group">
+              <label htmlFor="firmwareLink">Google Drive Link</label>
+              <input
+                type="url"
+                id="firmwareLink"
+                name="firmwareLink"
+                value={formData.firmwareLink}
+                onChange={handleInputChange}
+                placeholder="https://drive.google.com/file/d/..."
+                required={uploadType === 'link'}
+              />
+              <small>Please provide a public Google Drive link to the firmware file</small>
+            </div>
+          )}
 
           <button type="submit" className="submit-button" disabled={loading}>
             {loading ? 'Uploading...' : 'Upload Firmware'}
@@ -208,6 +269,7 @@ const AdminFirmware = () => {
                   <th>Brand</th>
                   <th>Model</th>
                   <th>Version</th>
+                  <th>Type</th>
                   <th>Upload Date</th>
                   <th>Actions</th>
                 </tr>
@@ -218,6 +280,7 @@ const AdminFirmware = () => {
                     <td>{firmware.brand}</td>
                     <td>{firmware.model}</td>
                     <td>{firmware.version}</td>
+                    <td>{firmware.firmwareLink ? 'Drive Link' : 'File'}</td>
                     <td>{new Date(firmware.uploadDate).toLocaleDateString()}</td>
                     <td>
                       <button
