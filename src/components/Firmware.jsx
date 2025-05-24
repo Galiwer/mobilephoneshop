@@ -23,6 +23,7 @@ const Firmware = () => {
     const fetchBrands = async () => {
       try {
         const response = await fetch(`${config.apiUrl}/api/firmware/brands`);
+        if (!response.ok) throw new Error('Failed to fetch brands');
         const data = await response.json();
         setBrands(data);
       } catch (error) {
@@ -40,6 +41,7 @@ const Firmware = () => {
       if (selectedBrand) {
         try {
           const response = await fetch(`${config.apiUrl}/api/firmware/models/${selectedBrand}`);
+          if (!response.ok) throw new Error('Failed to fetch models');
           const data = await response.json();
           setModels(data);
         } catch (error) {
@@ -66,39 +68,72 @@ const Firmware = () => {
   const handleDownload = async (firmwareId) => {
     try {
       setLoading(true);
-      const response = await fetch(`${config.apiUrl}/api/firmware/download/${firmwareId}`);
+      setError(null);
       
+      const response = await fetch(`${config.apiUrl}/api/firmware/download/${firmwareId}`);
       if (!response.ok) {
         throw new Error('Download failed');
       }
 
-      const contentType = response.headers.get('content-type');
-      const contentDisposition = response.headers.get('content-disposition');
-      let filename = 'firmware.zip';
-
-      if (contentDisposition) {
-        const filenameMatch = contentDisposition.match(/filename="(.+)"/);
-        if (filenameMatch) {
-          filename = filenameMatch[1];
-        }
+      const data = await response.json();
+      
+      if (!data || !data.type) {
+        throw new Error('Invalid firmware response received');
       }
 
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = filename;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
+      if (data.type === 'link') {
+        // For Google Drive links, open in new tab
+        window.open(data.url, '_blank');
+      } else if (data.type === 'file') {
+        // For direct downloads
+        const downloadResponse = await fetch(data.url);
+        if (!downloadResponse.ok) {
+          throw new Error('File download failed');
+        }
+
+        const blob = await downloadResponse.blob();
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = data.fileName || 'firmware.zip';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      } else {
+        throw new Error('Invalid firmware type received');
+      }
     } catch (error) {
       console.error('Error downloading firmware:', error);
-      setError('Failed to download firmware');
+      setError(`Failed to download firmware: ${error.message}`);
     } finally {
       setLoading(false);
     }
   };
+
+  // Add function to fetch firmware list when model is selected
+  useEffect(() => {
+    const fetchFirmwareList = async () => {
+      if (selectedBrand && selectedModel) {
+        try {
+          setLoading(true);
+          const response = await fetch(`${config.apiUrl}/api/firmware/list/${selectedBrand}/${selectedModel}`);
+          if (!response.ok) throw new Error('Failed to fetch firmware list');
+          const data = await response.json();
+          setFirmwareList(data);
+        } catch (error) {
+          console.error('Error fetching firmware list:', error);
+          setError('Failed to fetch firmware list');
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        setFirmwareList([]);
+      }
+    };
+
+    fetchFirmwareList();
+  }, [selectedBrand, selectedModel]);
 
   return (
     <div className="firmware-container">
@@ -158,25 +193,29 @@ const Firmware = () => {
       )}
 
       <div className="firmware-list">
-        {firmwareList.map((firmware) => (
-          <div key={firmware.id} className="firmware-item">
-            <div className="firmware-info">
-              <h3>{firmware.brand} {firmware.model}</h3>
-              <p>Version: {firmware.version}</p>
-              <p>Release Date: {new Date(firmware.createdAt).toLocaleDateString()}</p>
-              {firmware.releaseNotes && (
-                <p className="release-notes">{firmware.releaseNotes}</p>
-              )}
+        {firmwareList.length === 0 && selectedBrand && selectedModel ? (
+          <div className="no-firmware">No firmware available for selected model</div>
+        ) : (
+          firmwareList.map((firmware) => (
+            <div key={firmware.id} className="firmware-item">
+              <div className="firmware-info">
+                <h3>{firmware.brand} {firmware.model}</h3>
+                <p>Version: {firmware.version}</p>
+                <p>Release Date: {new Date(firmware.createdAt).toLocaleDateString()}</p>
+                {firmware.releaseNotes && (
+                  <p className="release-notes">{firmware.releaseNotes}</p>
+                )}
+              </div>
+              <button
+                onClick={() => handleDownload(firmware.id)}
+                className="download-button"
+                disabled={loading}
+              >
+                {loading ? 'Downloading...' : 'Download'}
+              </button>
             </div>
-            <button
-              onClick={() => handleDownload(firmware.id)}
-              className="download-button"
-              disabled={loading}
-            >
-              Download
-            </button>
-          </div>
-        ))}
+          ))
+        )}
       </div>
     </div>
   );
