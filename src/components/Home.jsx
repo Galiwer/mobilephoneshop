@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Banner from '../components/Banner';
-import Footer from '../components/Footer';
 import { getAllProducts, getImageUrl } from '../api/productService';
 import config from '../config';
 import './Home.css';
@@ -17,7 +16,7 @@ const Home = () => {
       try {
         setLoading(true);
         const data = await getAllProducts();
-        // Only take the first 10 products
+        
         setProducts(data.slice(0, 10));
       } catch (err) {
         console.error('Error fetching products:', err);
@@ -32,9 +31,10 @@ const Home = () => {
 
   // Function to format price
   const formatPrice = (price) => {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('en-LKR', {
       style: 'currency',
-      currency: 'USD'
+      currency: 'LKR',
+      maximumFractionDigits: 0
     }).format(price);
   };
 
@@ -95,8 +95,6 @@ const Home = () => {
           </Link>
         </div>
       </section>
-      
-      <Footer />
     </div>
   );
 };

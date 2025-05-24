@@ -46,7 +46,11 @@ function Products() {
 
   // Function to format price in Rs
   const formatPrice = (price) => {
-    return `Rs ${price.toLocaleString('en-IN')}`;
+    return new Intl.NumberFormat('en-LKR', {
+      style: 'currency',
+      currency: 'LKR',
+      maximumFractionDigits: 0
+    }).format(price);
   };
 
   // Function to format date

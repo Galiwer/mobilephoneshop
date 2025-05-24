@@ -30,7 +30,11 @@ const ProductDetails = () => {
 
   // Function to format price in Rs
   const formatPrice = (price) => {
-    return `Rs ${price.toLocaleString('en-IN')}`;
+    return new Intl.NumberFormat('en-LKR', {
+      style: 'currency',
+      currency: 'LKR',
+      maximumFractionDigits: 0
+    }).format(price);
   };
 
   // Handle image error
@@ -112,11 +116,9 @@ const ProductDetails = () => {
           <div className="product-price-section">
             <div className="price-container">
               <span className="current-price">{formatPrice(product.price)}</span>
-              <span className="price-note">Inclusive of all taxes</span>
+              
             </div>
-            <div className="availability-status">
-              <span className="in-stock">✓ In Stock</span>
-            </div>
+            
           </div>
 
           <div className="product-description">
