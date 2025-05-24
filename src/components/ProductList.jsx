@@ -12,19 +12,8 @@ function ProductList() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Check for admin access
-        if (!isAuthenticated()) {
-            navigate("/login");
-            return;
-        }
-
-        if (!isAdmin()) {
-            navigate("/");
-            return;
-        }
-
         fetchProducts();
-    }, [navigate]);
+    }, []);
 
     const fetchProducts = async () => {
         try {
@@ -49,6 +38,14 @@ function ProductList() {
                 alert('Failed to delete product');
             }
         }
+    };
+
+    // Function to format price
+    const formatPrice = (price) => {
+        const formattedNumber = new Intl.NumberFormat('en-US', {
+            maximumFractionDigits: 0
+        }).format(price);
+        return `LKR ${formattedNumber}`;
     };
 
     if (loading) {
@@ -107,16 +104,20 @@ function ProductList() {
                                 <tr key={product.id}>
                                     <td>
                                         <img
-                                            src={`http://localhost:8080/images/${product.imageFileName}`}
+                                            src={`${config.imageUrl}/${product.imageFileName}`}
                                             alt={product.name}
                                             className="product-thumbnail"
-                                            onError={(e) => e.target.src = '/api/placeholder/50/50'}
+                                            onError={(e) => {
+                                                if (!e.target.src.includes('/placeholder-image.jpg')) {
+                                                    e.target.src = '/placeholder-image.jpg';
+                                                }
+                                            }}
                                         />
                                     </td>
                                     <td>{product.name}</td>
                                     <td>{product.brand}</td>
                                     <td>{product.category}</td>
-                                    <td>${product.price}</td>
+                                    <td>{formatPrice(product.price)}</td>
                                     <td className="action-buttons">
                                         <button
                                             className="edit-button"
