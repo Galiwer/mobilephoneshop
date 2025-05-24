@@ -77,12 +77,12 @@ function Products() {
       <div className="products-header">
         <h2 className="products-title">Our Products</h2>
         {isUserAdmin && (
-          <button 
+          <Link 
+            to="/productlist"
             className="manage-products-button"
-            onClick={handleManageProducts}
           >
             Manage Products
-          </button>
+          </Link>
         )}
       </div>
       

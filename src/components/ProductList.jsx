@@ -12,8 +12,17 @@ function ProductList() {
     const navigate = useNavigate();
 
     useEffect(() => {
+        // Check authentication and admin status
+        if (!isAuthenticated()) {
+            navigate('/login');
+            return;
+        }
+        if (!isAdmin()) {
+            navigate('/');
+            return;
+        }
         fetchProducts();
-    }, []);
+    }, [navigate]);
 
     const fetchProducts = async () => {
         try {
