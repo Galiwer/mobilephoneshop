@@ -114,6 +114,7 @@
   border: none;
   min-width: 100px;
   width: auto;
+  max-width: 150px;
 }
 
 .nav-login-cart .login-button {
@@ -247,10 +248,13 @@
   flex-direction: column;
   gap: calc(10px + 0.5vw);
   width: 100%;
+  display: flex;
+  align-items: center;
 }
 
 .mobile-menu-container .nav-login-cart button {
   width: 100%;
+  max-width: 200px;
   padding: calc(12px + 0.4vw);
   font-size: calc(1rem + 0.2vw);
   margin: 0;
@@ -259,6 +263,7 @@
 .mobile-menu-container .nav-login-cart .profile-button,
 .mobile-menu-container .nav-login-cart .logout-button {
   width: 100%;
+  max-width: 200px;
 }
 
 /* Responsive styles */
