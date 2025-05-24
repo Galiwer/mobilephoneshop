@@ -21,9 +21,7 @@ export const getModelsByBrand = async (brand) => {
 
 export const getFirmwareVersions = async (brand, model) => {
     try {
-        const response = await axios.get(`${FIRMWARE_API}/admin/list`, {
-            headers: getAuthHeader()
-        });
+        const response = await axios.get(`${FIRMWARE_API}/admin/list`);
         return response.data.filter(firmware => 
             firmware.brand === brand && 
             firmware.model === model &&
@@ -46,9 +44,7 @@ export const uploadFirmware = (formData) => {
 };
 
 export const getAllFirmware = () => {
-    return axios.get(`${FIRMWARE_API}/admin/list`, {
-        headers: getAuthHeader()
-    });
+    return axios.get(`${FIRMWARE_API}/admin/list`);
 };
 
 export const deleteFirmware = (id) => {
