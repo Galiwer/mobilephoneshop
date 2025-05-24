@@ -9,6 +9,7 @@ const Home = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedProduct, setSelectedProduct] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -43,6 +44,18 @@ const Home = () => {
     e.target.src = '/api/placeholder/300/200';
   };
 
+  // Handle quick view click
+  const handleQuickView = (e, product) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setSelectedProduct(product);
+  };
+
+  // Close quick view modal
+  const closeQuickView = () => {
+    setSelectedProduct(null);
+  };
+
   return (
     <div className="home-container">
       <Banner />
@@ -75,7 +88,12 @@ const Home = () => {
                     alt={product.name}
                     onError={handleImageError}
                   />
-                  <button className="quick-view-button">Quick View</button>
+                  <button 
+                    className="quick-view-button"
+                    onClick={(e) => handleQuickView(e, product)}
+                  >
+                    Quick View
+                  </button>
                 </div>
                 <div className="product-info">
                   <h3>{product.name}</h3>
@@ -94,6 +112,41 @@ const Home = () => {
           </Link>
         </div>
       </section>
+
+      {/* Quick View Modal */}
+      {selectedProduct && (
+        <div className="modal-overlay" onClick={closeQuickView}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <button className="close-modal" onClick={closeQuickView}>×</button>
+            <div className="quick-view-modal">
+              <div className="quick-view-image">
+                <img
+                  src={getImageUrl(selectedProduct.imageFileName)}
+                  alt={selectedProduct.name}
+                  onError={handleImageError}
+                />
+              </div>
+              <div className="quick-view-details">
+                <h2>{selectedProduct.name}</h2>
+                <div className="quick-view-meta">
+                  <span className="quick-view-brand">{selectedProduct.brand}</span>
+                  {selectedProduct.category && (
+                    <span className="quick-view-category">{selectedProduct.category}</span>
+                  )}
+                </div>
+                <p className="quick-view-price">{formatPrice(selectedProduct.price)}</p>
+                <p className="quick-view-description">{selectedProduct.description}</p>
+                <Link 
+                  to={`/product/${selectedProduct.id}`} 
+                  className="view-details-button"
+                >
+                  View Full Details
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
