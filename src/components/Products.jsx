@@ -78,7 +78,7 @@ function Products() {
         {isUserAdmin && (
           <button 
             className="manage-products-button"
-            onClick={() => navigate('/ProductList')}
+            onClick={() => navigate('/productlist')}
           >
             Manage Products
           </button>

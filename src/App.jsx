@@ -45,17 +45,17 @@ function App() {
             <main className="main-content">
                 <Routes>
                     <Route path='/' element={<Home />} />
-                    <Route path='/Products' element={<Products />} />
+                    <Route path='/products' element={<Products />} />
                     <Route path='/product/:id' element={<ProductDetails />} />
-                    <Route path='/Repair' element={<EnterNumberPage />} />
+                    <Route path='/repair' element={<EnterNumberPage />} />
                     <Route path='/repair_tracking/display_progress_file/display_progress_page' element={<DisplayProgressPage />} />
                     <Route path='/repair_tracking/progress_update_file/progress_update_page' element={
                         <ProtectedRoute requireAdmin={true}>
                             <ProgressUpdatePage />
                         </ProtectedRoute>
                     } />
-                    <Route path='/Aboutus' element={<Aboutus />} />
-                    <Route path='/ProductList' element={
+                    <Route path='/aboutus' element={<Aboutus />} />
+                    <Route path='/productlist' element={
                         <ProtectedRoute requireAdmin={true}>
                             <ProductList />
                         </ProtectedRoute>
@@ -70,10 +70,10 @@ function App() {
                             <EditProduct />
                         </ProtectedRoute>
                     } />
-                    <Route path='/Firmware' element={<Firmware />} />
-                    <Route path='/FAQ' element={<FAQList />} />
+                    <Route path='/firmware' element={<Firmware />} />
+                    <Route path='/faq' element={<FAQList />} />
                     <Route path='/login' element={<LoginPage />} />
-                    <Route path='/FirmwareManager' element={<FirmwareManager />} />
+                    <Route path='/firmwaremanager' element={<FirmwareManager />} />
                     <Route path='/admin/firmware' element={
                         <ProtectedRoute requireAdmin={true}>
                             <AdminFirmware />
