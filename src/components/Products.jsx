@@ -72,6 +72,12 @@ function Products() {
     navigate('/productlist');
   };
 
+  const handleImageClick = (e, imageUrl) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setSelectedImage(imageUrl);
+  };
+
   return (
     <div className="products-container">
       <div className="products-header">
@@ -120,10 +126,7 @@ function Products() {
                   src={`${config.imageUrl}/${product.imageFileName}`}
                   alt={product.name}
                   className="product-image"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setSelectedImage(`${config.imageUrl}/${product.imageFileName}`);
-                  }}
+                  onClick={(e) => handleImageClick(e, `${config.imageUrl}/${product.imageFileName}`)}
                   onError={handleImageError}
                 />
               </div>
