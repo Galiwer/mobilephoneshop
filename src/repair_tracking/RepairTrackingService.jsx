@@ -1,41 +1,20 @@
-import { getToken } from '../services/UserService';
-import config from '../config';
+const BASE_URL = '/api/jobs';
 
-const BASE_URL = config.apiUrl + "/api/jobs";
+const getToken = () => localStorage.getItem('token');
 
-export const statusMap = {
-    'IN_QUEUE': 'In Queue',
-    'IN_PROGRESS': 'In Progress',
-    'COMPLETED': 'Completed'
-};
-
-// Public tracking endpoints
-export const getJobStatus = async (jobNumber) => {
-    try {
-        const res = await fetch(`${BASE_URL}/track/${jobNumber}`);
-        if (!res.ok) {
-            const error = await res.text();
-            throw new Error(error || 'Failed to fetch job status');
+const handleErrorResponse = async (response) => {
+    const contentType = response.headers.get("content-type");
+    if (contentType && contentType.includes("application/json")) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'An error occurred');
+    } else {
+        const errorText = await response.text();
+        try {
+            const errorData = JSON.parse(errorText);
+            throw new Error(errorData.error || 'An error occurred');
+        } catch {
+            throw new Error(errorText || 'An error occurred');
         }
-        return res.json();
-    } catch (error) {
-        console.error('Error fetching job status:', error);
-        throw error;
-    }
-};
-
-
-export const getJobById = async (jobNumber) => {
-    try {
-        const res = await fetch(`${BASE_URL}/public/${jobNumber}`);
-        if (!res.ok) {
-            const error = await res.text();
-            throw new Error(error || 'Failed to fetch job');
-        }
-        return res.json();
-    } catch (error) {
-        console.error('Error fetching job:', error);
-        throw error;
     }
 };
 
@@ -45,8 +24,7 @@ export const getAllJobs = async () => {
             headers: { 'Authorization': `Bearer ${getToken()}` }
         });
         if (!res.ok) {
-            const error = await res.text();
-            throw new Error(error || 'Failed to fetch jobs');
+            await handleErrorResponse(res);
         }
         return res.json();
     } catch (error) {
@@ -66,8 +44,7 @@ export const createJob = async (jobData) => {
             body: JSON.stringify(jobData)
         });
         if (!res.ok) {
-            const error = await res.text();
-            throw new Error(error || 'Failed to create job');
+            await handleErrorResponse(res);
         }
         return res.json();
     } catch (error) {
@@ -87,8 +64,7 @@ export const updateJobStatus = async (jobNumber, status) => {
             body: JSON.stringify({ status })
         });
         if (!res.ok) {
-            const error = await res.text();
-            throw new Error(error || 'Failed to update job status');
+            await handleErrorResponse(res);
         }
         return res.json();
     } catch (error) {
@@ -104,8 +80,7 @@ export const deleteJob = async (jobNumber) => {
             headers: { 'Authorization': `Bearer ${getToken()}` }
         });
         if (!res.ok) {
-            const error = await res.text();
-            throw new Error(error || 'Failed to delete job');
+            await handleErrorResponse(res);
         }
         return res.json();
     } catch (error) {
@@ -114,10 +89,15 @@ export const deleteJob = async (jobNumber) => {
     }
 };
 
-export const getStatusCode = (statusText) => {
-    return Object.entries(statusMap).find(([code, text]) => text === statusText)?.[0];
-};
-
-export const getStatusText = (statusCode) => {
-    return statusMap[statusCode] || 'Unknown';
+export const getJobById = async (jobNumber) => {
+    try {
+        const res = await fetch(`${BASE_URL}/public/${jobNumber}`);
+        if (!res.ok) {
+            await handleErrorResponse(res);
+        }
+        return res.json();
+    } catch (error) {
+        console.error('Error fetching job:', error);
+        throw error;
+    }
 }; 

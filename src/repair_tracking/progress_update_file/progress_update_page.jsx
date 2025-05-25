@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { isAuthenticated, isAdmin } from "../../services/UserService";
 import { getAllJobs, updateJobStatus, deleteJob, createJob, getStatusCode, getStatusText, statusMap } from "../RepairTrackingService";
+import ErrorMessage from "../../components/ErrorMessage";
 import "./progress_update_page.css";
 
 const ProgressUpdate = () => {
@@ -43,7 +44,7 @@ const ProgressUpdate = () => {
       setNewJobNumber(`J${lastNumber + 1}`);
     } catch (error) {
       console.error("Error fetching jobs:", error);
-      setError(error.message || "Failed to load jobs. Please try again later.");
+      setError(error.message);
       if (error.status === 401 || error.status === 403) {
         navigate("/login");
       }
@@ -58,7 +59,7 @@ const ProgressUpdate = () => {
       fetchJobs();
     } catch (error) {
       console.error("Error updating status:", error);
-      setError(error.message || "Failed to update job status. Please try again.");
+      setError(error.message);
       if (error.status === 401 || error.status === 403) {
         navigate("/login");
       }
@@ -73,7 +74,7 @@ const ProgressUpdate = () => {
         fetchJobs();
       } catch (error) {
         console.error("Error deleting job:", error);
-        setError(error.message || "Failed to delete job. Please try again.");
+        setError(error.message);
         if (error.status === 401 || error.status === 403) {
           navigate("/login");
         }
@@ -92,7 +93,7 @@ const ProgressUpdate = () => {
       fetchJobs();
     } catch (error) {
       console.error("Error adding job:", error);
-      setError(error.message || "Failed to add job. Please try again.");
+      setError(error.message);
       if (error.status === 401 || error.status === 403) {
         navigate("/login");
       }
@@ -133,11 +134,10 @@ const ProgressUpdate = () => {
           </div>
         </div>
 
-        {error && (
-          <div className="error-message" style={{ margin: '10px 0', padding: '10px', backgroundColor: '#ffebee', color: '#c62828', borderRadius: '4px' }}>
-            {error}
-          </div>
-        )}
+        <ErrorMessage 
+          message={error} 
+          onClose={() => setError(null)}
+        />
 
         <div className="search-bar">
           <input
