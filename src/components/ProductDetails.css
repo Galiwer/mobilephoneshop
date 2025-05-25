@@ -395,4 +395,114 @@
     height: 25px;
     font-size: 16px;
   }
+}
+
+.purchase-section {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.price-container {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.price-label {
+  font-size: 1.1rem;
+  color: #666;
+  font-weight: 500;
+}
+
+.product-price {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #2c3e50;
+}
+
+.contact-purchase {
+  margin-top: 1.5rem;
+}
+
+.purchase-info {
+  color: #666;
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+
+.whatsapp-contact-button {
+  display: inline-block;
+  background: #25D366;
+  color: white;
+  text-decoration: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(37, 211, 102, 0.2);
+}
+
+.whatsapp-contact-button:hover {
+  background: #22c35e;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+}
+
+.whatsapp-button-content {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.whatsapp-icon {
+  width: 24px;
+  height: 24px;
+  filter: brightness(0) invert(1);
+}
+
+.whatsapp-button-content span {
+  font-weight: 600;
+  font-size: 1rem;
+  color: white;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .purchase-section {
+    padding: 1rem;
+    margin: 1rem 0;
+  }
+
+  .product-price {
+    font-size: 1.5rem;
+  }
+
+  .whatsapp-contact-button {
+    width: 100%;
+    text-align: center;
+  }
+
+  .whatsapp-button-content {
+    justify-content: center;
+  }
+}
+
+/* Animation for the button */
+.whatsapp-contact-button {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 } 

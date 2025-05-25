@@ -30,10 +30,21 @@ const ProductDetails = () => {
 
   // Function to format price in Rs
   const formatPrice = (price) => {
-    const formattedNumber = new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'LKR',
+      minimumFractionDigits: 0,
       maximumFractionDigits: 0
     }).format(price);
-    return `LKR ${formattedNumber}`;
+  };
+
+  const generateWhatsAppMessage = (product) => {
+    const message = `Hi! I'm interested in purchasing:\n\n` +
+      `Product: ${product.name}\n` +
+      `Brand: ${product.brand}\n` +
+      `Price: ${formatPrice(product.price)}\n\n` +
+      `Please provide more information about availability and payment options.`;
+    return encodeURIComponent(message);
   };
 
   // Handle image error
@@ -112,29 +123,37 @@ const ProductDetails = () => {
             </div>
           </div>
 
-          <div className="product-price-section">
+          <div className="purchase-section">
             <div className="price-container">
-              <span className="current-price">{formatPrice(product.price)}</span>
-              
+              <span className="price-label">Price:</span>
+              <span className="product-price">{formatPrice(product.price)}</span>
             </div>
             
+            <div className="contact-purchase">
+              <p className="purchase-info">
+                To purchase this product, please contact us via WhatsApp for availability and payment details.
+              </p>
+              <a
+                href={`https://wa.me/+94777123456?text=${generateWhatsAppMessage(product)}`}
+                className="whatsapp-contact-button"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <div className="whatsapp-button-content">
+                  <img
+                    src="https://cdn-icons-png.flaticon.com/512/124/124034.png"
+                    alt="WhatsApp"
+                    className="whatsapp-icon"
+                  />
+                  <span>Contact to Purchase</span>
+                </div>
+              </a>
+            </div>
           </div>
 
           <div className="product-description">
             <h2>Description</h2>
             <p>{product.description}</p>
-            <a
-                href="https://wa.me/yourwhatsappphonenumber"
-                className="whatsapp-button"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <img
-                  src="https://cdn-icons-png.flaticon.com/512/124/124034.png"
-                  alt="Chat on WhatsApp"
-                  className="whatsapp-icon"
-                />
-              </a>
           </div>
 
           {product.specifications && product.specifications.length > 0 && (
