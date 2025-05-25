@@ -123,19 +123,7 @@ const ProductDetails = () => {
           <div className="product-description">
             <h2>Description</h2>
             <p>{product.description}</p>
-          </div>
-
-          {product.specifications && product.specifications.length > 0 && (
-            <div className="product-specs">
-              <h2>Key Features</h2>
-              <ul>
-                {product.specifications.map((spec, index) => (
-                  <li key={index}>{spec}</li>
-                ))}
-              </ul>
-
-
-              <a
+            <a
                 href="https://wa.me/yourwhatsappphonenumber"
                 className="whatsapp-button"
                 target="_blank"
@@ -147,6 +135,17 @@ const ProductDetails = () => {
                   className="whatsapp-icon"
                 />
               </a>
+          </div>
+
+          {product.specifications && product.specifications.length > 0 && (
+            <div className="product-specs">
+              <h2>Key Features</h2>
+              <ul>
+                {product.specifications.map((spec, index) => (
+                  <li key={index}>{spec}</li>
+                ))}
+              </ul>
+
             </div>
           )}
 
