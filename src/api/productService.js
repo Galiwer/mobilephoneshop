@@ -14,7 +14,7 @@ const getAuthHeaders = () => {
 
 export const getAllProducts = async () => {
   try {
-    const res = await fetch(`${BASE_URL}/list`);
+    const res = await fetch(`${BASE_URL}`);
     if (!res.ok) {
       const errorText = await res.text();
       try {
@@ -33,7 +33,7 @@ export const getAllProducts = async () => {
 
 export const getProductById = async (id) => {
   try {
-    const res = await fetch(`${BASE_URL}/get/${id}`);
+    const res = await fetch(`${BASE_URL}/${id}`);
     if (!res.ok) {
       const errorText = await res.text();
       try {
