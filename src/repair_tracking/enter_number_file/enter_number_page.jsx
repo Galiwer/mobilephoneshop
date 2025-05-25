@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { isAuthenticated, isAdmin } from "../../services/UserService";
 import { getJobById } from "../RepairTrackingService";
-import ErrorMessage from "../../components/ErrorMessage";
 import "./enter_number_page.css";
 
 export default function EnterNumberPage() {
@@ -86,10 +85,19 @@ export default function EnterNumberPage() {
         <div className="card">
           <h1 className="title">Repair Tracking</h1>
           
-          <ErrorMessage 
-            message={error} 
-            onClose={() => setError(null)}
-          />
+
+          {error && (
+            <div className="error-message" style={{ 
+              margin: '10px 0', 
+              padding: '10px', 
+              backgroundColor: '#ffebee', 
+              color: '#c62828', 
+              borderRadius: '4px',
+              textAlign: 'center' 
+            }}>
+              {error}
+            </div>
+          )}
 
           <form className="form" onSubmit={handleSubmit}>
             <div className="input-group">
