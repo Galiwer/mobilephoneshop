@@ -444,6 +444,7 @@
   border-radius: 8px;
   transition: all 0.3s ease;
   box-shadow: 0 2px 8px rgba(37, 211, 102, 0.2);
+  width: auto;
 }
 
 .whatsapp-contact-button:hover {
@@ -461,7 +462,7 @@
 .whatsapp-icon {
   width: 24px;
   height: 24px;
-  filter: brightness(0) invert(1);
+  color: white;
 }
 
 .whatsapp-button-content span {
@@ -488,6 +489,11 @@
 
   .whatsapp-button-content {
     justify-content: center;
+  }
+
+  .whatsapp-icon {
+    width: 20px;
+    height: 20px;
   }
 }
 
