@@ -397,19 +397,14 @@
   }
 }
 
-.purchase-section {
+.price-display {
   background: #f8f9fa;
+  padding: 1rem 1.5rem;
   border-radius: 12px;
-  padding: 1.5rem;
-  margin: 1.5rem 0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.price-container {
   display: flex;
   align-items: baseline;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .price-label {
@@ -424,15 +419,45 @@
   color: #2c3e50;
 }
 
-.contact-purchase {
-  margin-top: 1.5rem;
+.contact-purchase-section {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .purchase-info {
-  color: #666;
-  font-size: 0.95rem;
+  margin-bottom: 1.5rem;
+}
+
+.purchase-info p {
+  font-size: 1.1rem;
+  color: #2c3e50;
   margin-bottom: 1rem;
-  line-height: 1.5;
+  font-weight: 500;
+}
+
+.purchase-info ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1.5rem 0;
+}
+
+.purchase-info li {
+  color: #666;
+  padding-left: 1.5rem;
+  position: relative;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.purchase-info li::before {
+  content: '✓';
+  color: #25D366;
+  position: absolute;
+  left: 0;
+  font-weight: bold;
 }
 
 .whatsapp-contact-button {
@@ -440,11 +465,12 @@
   background: #25D366;
   color: white;
   text-decoration: none;
-  padding: 0.8rem 1.5rem;
+  padding: 1rem 2rem;
   border-radius: 8px;
   transition: all 0.3s ease;
   box-shadow: 0 2px 8px rgba(37, 211, 102, 0.2);
-  width: auto;
+  width: 100%;
+  text-align: center;
 }
 
 .whatsapp-contact-button:hover {
@@ -456,6 +482,7 @@
 .whatsapp-button-content {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.8rem;
 }
 
@@ -471,24 +498,24 @@
   color: white;
 }
 
-/* Responsive Styles */
 @media (max-width: 768px) {
-  .purchase-section {
+  .price-display {
     padding: 1rem;
-    margin: 1rem 0;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
   }
 
   .product-price {
     font-size: 1.5rem;
   }
 
-  .whatsapp-contact-button {
-    width: 100%;
-    text-align: center;
+  .contact-purchase-section {
+    padding: 1rem;
   }
 
-  .whatsapp-button-content {
-    justify-content: center;
+  .purchase-info p {
+    font-size: 1rem;
   }
 
   .whatsapp-icon {

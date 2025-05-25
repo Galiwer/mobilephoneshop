@@ -129,33 +129,37 @@ const ProductDetails = () => {
             </div>
           </div>
 
-          <div className="purchase-section">
-            <div className="price-container">
-              <span className="price-label">Price:</span>
-              <span className="product-price">{formatPrice(product.price)}</span>
-            </div>
-            
-            <div className="contact-purchase">
-              <p className="purchase-info">
-                To purchase this product, please contact us via WhatsApp for availability and payment details.
-              </p>
-              <a
-                href={`https://wa.me/+94777123456?text=${generateWhatsAppMessage(product)}`}
-                className="whatsapp-contact-button"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <div className="whatsapp-button-content">
-                  <WhatsAppIcon />
-                  <span>Contact to Purchase</span>
-                </div>
-              </a>
-            </div>
+          <div className="price-display">
+            <span className="price-label">Price:</span>
+            <span className="product-price">{formatPrice(product.price)}</span>
           </div>
 
           <div className="product-description">
             <h2>Description</h2>
             <p>{product.description}</p>
+          </div>
+
+          <div className="contact-purchase-section">
+            <div className="purchase-info">
+              <p>Interested in this product? Contact us via WhatsApp for:</p>
+              <ul>
+                <li>Real-time availability check</li>
+                <li>Special offers and discounts</li>
+                <li>Payment options</li>
+                <li>Delivery information</li>
+              </ul>
+            </div>
+            <a
+              href={`https://wa.me/+94777123456?text=${generateWhatsAppMessage(product)}`}
+              className="whatsapp-contact-button"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <div className="whatsapp-button-content">
+                <WhatsAppIcon />
+                <span>Contact to Purchase</span>
+              </div>
+            </a>
           </div>
 
           {product.specifications && product.specifications.length > 0 && (
@@ -166,7 +170,6 @@ const ProductDetails = () => {
                   <li key={index}>{spec}</li>
                 ))}
               </ul>
-
             </div>
           )}
 
