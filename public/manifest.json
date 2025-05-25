@@ -1,0 +1,15 @@
+{
+  "short_name": "CIROMOBILES",
+  "name": "CIROMOBILES - Mobile Phone Shop",
+  "icons": [
+    {
+      "src": "ciro-icon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#7B1FA2",
+  "background_color": "#ffffff"
+} 
