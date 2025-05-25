@@ -56,6 +56,11 @@ const Home = () => {
     setSelectedProduct(null);
   };
 
+  // Handle product click
+  const handleProductClick = (productId) => {
+    navigate(`/product/${productId}`);
+  };
+
   return (
     <div className="home-container">
       <Banner />
@@ -81,7 +86,11 @@ const Home = () => {
         {!loading && !error && products.length > 0 && (
           <div className="products-showcase">
             {products.map((product) => (
-              <div key={product.id} className="product-highlight">
+              <div 
+                key={product.id} 
+                className="product-highlight"
+                onClick={() => handleProductClick(product.id)}
+              >
                 <div className="product-image-wrapper">
                   <img 
                     src={getImageUrl(product.imageFileName)}
@@ -100,7 +109,6 @@ const Home = () => {
                   <span className="product-brand">{product.brand}</span>
                   <p className="product-price">{formatPrice(product.price)}</p>
                 </div>
-                <Link to={`/product/${product.id}`} className="product-link" aria-label={`View ${product.name}`} />
               </div>
             ))}
           </div>
@@ -136,12 +144,15 @@ const Home = () => {
                 </div>
                 <p className="quick-view-price">{formatPrice(selectedProduct.price)}</p>
                 <p className="quick-view-description">{selectedProduct.description}</p>
-                <Link 
-                  to={`/product/${selectedProduct.id}`} 
+                <button 
                   className="view-details-button"
+                  onClick={() => {
+                    closeQuickView();
+                    navigate(`/product/${selectedProduct.id}`);
+                  }}
                 >
                   View Full Details
-                </Link>
+                </button>
               </div>
             </div>
           </div>
