@@ -140,15 +140,6 @@ const ProductDetails = () => {
           </div>
 
           <div className="contact-purchase-section">
-            <div className="purchase-info">
-              <p>Interested in this product? Contact us via WhatsApp for:</p>
-              <ul>
-                <li>Real-time availability check</li>
-                <li>Special offers and discounts</li>
-                <li>Payment options</li>
-                <li>Delivery information</li>
-              </ul>
-            </div>
             <a
               href={`https://wa.me/+94777123456?text=${generateWhatsAppMessage(product)}`}
               className="whatsapp-contact-button"
