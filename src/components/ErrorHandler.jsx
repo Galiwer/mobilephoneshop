@@ -1,5 +1,6 @@
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import './ErrorHandler.css';
 
 // Error types and their corresponding toast configurations
 const ERROR_TYPES = {

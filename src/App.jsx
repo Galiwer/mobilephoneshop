@@ -2,6 +2,8 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Navibar from './components/Navibar';
 import Footer from './components/Footer';
 import './App.css';
+import 'react-toastify/dist/ReactToastify.css';
+import './components/ErrorHandler.css';
 
 import Home from './components/Home';
 import Products from './components/Products';
