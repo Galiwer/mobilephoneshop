@@ -100,7 +100,12 @@ const Home = () => {
                   <span className="product-brand">{product.brand}</span>
                   <p className="product-price">{formatPrice(product.price)}</p>
                 </div>
-                <Link to={`/product/${product.id}`} className="product-link" aria-label={`View ${product.name}`} />
+                <Link 
+                  to={`/product/${product.id}`} 
+                  className="product-link" 
+                  aria-label={`View ${product.name}`}
+                  onClick={(e) => e.stopPropagation()}
+                />
               </div>
             ))}
           </div>
