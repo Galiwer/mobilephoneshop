@@ -20,26 +20,18 @@ const ProductDetails = () => {
   useEffect(() => {
     const fetchProductDetails = async () => {
       try {
-        console.log('Fetching product details for ID:', id);
         setLoading(true);
         const data = await getProductById(id);
-        console.log('Received product data:', data);
         setProduct(data);
       } catch (err) {
+        setError(err.message);
         console.error('Error fetching product details:', err);
-        setError(err.message || 'Failed to load product details');
       } finally {
         setLoading(false);
       }
     };
 
-    if (id) {
-      fetchProductDetails();
-    } else {
-      console.error('No product ID provided');
-      setError('No product ID provided');
-      setLoading(false);
-    }
+    fetchProductDetails();
   }, [id]);
 
   // Function to format price in Rs

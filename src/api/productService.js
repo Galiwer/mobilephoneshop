@@ -1,9 +1,6 @@
 import config from "../config";
 
-const BASE_URL = `${config.apiUrl}/api/products`;
-
-// Add debugging to see what URL we're using
-console.log('API Base URL:', BASE_URL);
+const BASE_URL = config.apiUrl + "/api/products";
 
 const getAuthHeaders = () => {
   const token = localStorage.getItem('token');
@@ -11,26 +8,13 @@ const getAuthHeaders = () => {
     throw new Error('Authentication required');
   }
   return {
-    'Authorization': `Bearer ${token}`,
-    'Content-Type': 'application/json'
+    'Authorization': `Bearer ${token}`
   };
 };
 
 export const getAllProducts = async () => {
   try {
-    // Try to get auth headers, but don't fail if they're not available
-    let headers = {};
-    try {
-      headers = getAuthHeaders();
-    } catch (e) {
-      // If no auth headers available, proceed without them
-      console.log('No auth headers available, proceeding as unauthenticated request');
-    }
-
-    const res = await fetch(`${BASE_URL}`, {
-      headers: headers
-    });
-    
+    const res = await fetch(`${BASE_URL}/list`);
     if (!res.ok) {
       const errorText = await res.text();
       try {
@@ -49,47 +33,19 @@ export const getAllProducts = async () => {
 
 export const getProductById = async (id) => {
   try {
-    console.log('Fetching product with ID:', id);
-    console.log('Using URL:', `${BASE_URL}/${id}`);
-
-    // Try to get auth headers, but don't fail if they're not available
-    let headers = {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-    };
-    
-    try {
-      const authHeaders = getAuthHeaders();
-      headers = { ...headers, ...authHeaders };
-      console.log('Using authenticated request');
-    } catch (e) {
-      console.log('Proceeding with unauthenticated request');
-    }
-
-    const res = await fetch(`${BASE_URL}/${id}`, {
-      method: 'GET',
-      headers: headers
-    });
-    
-    console.log('Response status:', res.status);
-    
+    const res = await fetch(`${BASE_URL}/get/${id}`);
     if (!res.ok) {
       const errorText = await res.text();
-      console.error('Error response:', errorText);
-      
       try {
         const errorJson = JSON.parse(errorText);
-        throw new Error(errorJson.error || errorJson.message || `Failed to fetch product (${res.status})`);
+        throw new Error(errorJson.error || errorJson.message || 'Failed to fetch product');
       } catch (e) {
-        throw new Error(errorText || `Failed to fetch product (${res.status})`);
+        throw new Error(errorText || 'Failed to fetch product');
       }
     }
-
-    const data = await res.json();
-    console.log('Successfully fetched product data:', data);
-    return data;
+    return res.json();
   } catch (error) {
-    console.error('Error in getProductById:', error);
+    console.error('Error fetching product:', error);
     throw error;
   }
 };

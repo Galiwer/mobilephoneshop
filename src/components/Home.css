@@ -165,11 +165,11 @@
   font-size: calc(0.9rem + 0.1vw);
   opacity: 0;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  z-index: 11;
+  z-index: 3;
   border: none;
   cursor: pointer;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  pointer-events: auto;
+  pointer-events: none;
 }
 
 .product-highlight:hover .quick-view-button {
@@ -188,9 +188,8 @@
 .product-link {
   position: absolute;
   inset: 0;
-  z-index: 10;
+  z-index: 2;
   cursor: pointer;
-  text-decoration: none;
 }
 
 /* Product Card States */
