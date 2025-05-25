@@ -244,16 +244,16 @@ const AdminFirmware = () => {
           </div>
 
           {uploadType === 'file' ? (
-            <div className="form-group">
-              <label htmlFor="firmwareFile">Firmware File</label>
-              <input
-                type="file"
-                id="firmwareFile"
-                name="firmwareFile"
-                onChange={handleInputChange}
+          <div className="form-group">
+            <label htmlFor="firmwareFile">Firmware File</label>
+            <input
+              type="file"
+              id="firmwareFile"
+              name="firmwareFile"
+              onChange={handleInputChange}
                 accept=".bin,.hex,.zip"
                 required={uploadType === 'file'}
-              />
+            />
               <small>Accepted formats: .bin, .hex, .zip</small>
             </div>
           ) : (
@@ -269,7 +269,7 @@ const AdminFirmware = () => {
                 required={uploadType === 'link'}
               />
               <small>Please provide a public Google Drive link to the firmware file</small>
-            </div>
+          </div>
           )}
 
           <button type="submit" className="submit-button" disabled={loading}>
@@ -286,7 +286,7 @@ const AdminFirmware = () => {
         {error && <div className="error-message">{error}</div>}
         
         <div className="firmware-list">
-          {existingFirmware.map((firmware) => (
+                {existingFirmware.map((firmware) => (
             <div key={firmware.id} className="firmware-item">
               <div className="firmware-details">
                 <h3>{firmware.brand} {firmware.model}</h3>
@@ -307,17 +307,17 @@ const AdminFirmware = () => {
                 >
                   Download
                 </button>
-                <button
+                      <button
                   onClick={() => handleDelete(firmware.id)}
-                  className="delete-button"
+                        className="delete-button"
                   disabled={loading}
-                >
-                  Delete
-                </button>
+                      >
+                        Delete
+                      </button>
               </div>
             </div>
-          ))}
-        </div>
+                ))}
+          </div>
       </section>
     </div>
   );

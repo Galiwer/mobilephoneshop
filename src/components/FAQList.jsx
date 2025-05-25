@@ -68,31 +68,31 @@ const FAQList = () => {
       <div className="faq-list">
         {faqs.length > 0 ? (
           faqs.map((faq, index) => (
-            <div key={faq.id} className="faq-item">
-              <div
-                className="faq-question"
-                onClick={() => toggleFAQ(index)}
-              >
-                <h3>{faq.question}</h3>
-                <span className="faq-icon">
-                  {openIndex === index ? '−' : '+'}
-                </span>
-              </div>
-              {openIndex === index && (
-                <div className="faq-answer">
-                  <p>{faq.answer}</p>
-                  {faq.category && (
-                    <span className="faq-category">Category: {faq.category}</span>
-                  )}
-                </div>
-              )}
+          <div key={faq.id} className="faq-item">
+            <div
+              className="faq-question"
+              onClick={() => toggleFAQ(index)}
+            >
+              <h3>{faq.question}</h3>
+              <span className="faq-icon">
+                {openIndex === index ? '−' : '+'}
+              </span>
             </div>
+            {openIndex === index && (
+              <div className="faq-answer">
+                <p>{faq.answer}</p>
+                {faq.category && (
+                  <span className="faq-category">Category: {faq.category}</span>
+                )}
+              </div>
+            )}
+          </div>
           ))
         ) : (
-          <div className="no-faqs">
-            <p>No FAQs available at the moment.</p>
-          </div>
-        )}
+        <div className="no-faqs">
+          <p>No FAQs available at the moment.</p>
+        </div>
+      )}
       </div>
     </div>
   );

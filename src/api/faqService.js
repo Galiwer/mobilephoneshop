@@ -35,14 +35,14 @@ export const getAllFaqsAdmin = async () => {
 
 export const createFaq = async (faq) => {
   try {
-    const res = await fetch(BASE_URL, {
-      method: "POST",
+  const res = await fetch(BASE_URL, {
+    method: "POST",
       headers: { 
         "Content-Type": "application/json",
         'Authorization': `Bearer ${getToken()}`
       },
-      body: JSON.stringify(faq),
-    });
+    body: JSON.stringify(faq),
+  });
     if (!res.ok) {
       const errorData = await res.json();
       throw new Error(errorData.message || 'Failed to create FAQ');
@@ -57,14 +57,14 @@ export const createFaq = async (faq) => {
 
 export const updateFaq = async (id, faq) => {
   try {
-    const res = await fetch(`${BASE_URL}/${id}`, {
-      method: "PUT",
+  const res = await fetch(`${BASE_URL}/${id}`, {
+    method: "PUT",
       headers: { 
         "Content-Type": "application/json",
         'Authorization': `Bearer ${getToken()}`
       },
-      body: JSON.stringify(faq),
-    });
+    body: JSON.stringify(faq),
+  });
     if (!res.ok) {
       const errorData = await res.json();
       throw new Error(errorData.message || 'Failed to update FAQ');

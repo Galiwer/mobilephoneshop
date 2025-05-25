@@ -79,7 +79,7 @@ const Firmware = () => {
       
       if (!data || !data.type) {
         throw new Error('Invalid firmware response received');
-      }
+    }
 
       if (data.type === 'link') {
         // For Google Drive links, open in new tab
@@ -198,7 +198,7 @@ const Firmware = () => {
         ) : (
           firmwareList.map((firmware) => (
             <div key={firmware.id} className="firmware-item">
-              <div className="firmware-info">
+      <div className="firmware-info">
                 <h3>{firmware.brand} {firmware.model}</h3>
                 <p>Version: {firmware.version}</p>
                 <p>Release Date: {new Date(firmware.createdAt).toLocaleDateString()}</p>
