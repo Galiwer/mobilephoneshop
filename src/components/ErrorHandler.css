@@ -1,0 +1,88 @@
+/* Error Toast Styles */
+.error-toast {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  min-width: 300px;
+}
+
+.error-toast-container {
+  border-radius: 8px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+.error-toast-container.error {
+  background: linear-gradient(to right, #fee2e2, #fef2f2) !important;
+  border-left: 4px solid #dc2626 !important;
+}
+
+.error-toast-container.warning {
+  background: linear-gradient(to right, #fef3c7, #fffbeb) !important;
+  border-left: 4px solid #d97706 !important;
+}
+
+.error-toast-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.error-toast-icon {
+  font-size: 1.2em;
+}
+
+.error-toast-title strong {
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.error-toast-message {
+  color: #4b5563;
+  font-size: 0.9em;
+  line-height: 1.4;
+  margin-left: 28px;
+}
+
+/* Progress Bar */
+.Toastify__progress-bar {
+  height: 3px !important;
+}
+
+.error-toast-container.error .Toastify__progress-bar {
+  background: #dc2626 !important;
+}
+
+.error-toast-container.warning .Toastify__progress-bar {
+  background: #d97706 !important;
+}
+
+/* Close Button */
+.Toastify__close-button {
+  color: #6b7280 !important;
+  opacity: 0.8;
+}
+
+.Toastify__close-button:hover {
+  opacity: 1;
+}
+
+/* Toast Animation */
+.Toastify__toast {
+  transition: transform 0.2s ease-out !important;
+}
+
+.Toastify__toast:hover {
+  transform: translateY(-2px);
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 480px) {
+  .error-toast {
+    min-width: auto;
+    width: 100%;
+  }
+  
+  .error-toast-message {
+    margin-left: 24px;
+    font-size: 0.85em;
+  }
+} 
