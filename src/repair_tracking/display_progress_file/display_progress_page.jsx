@@ -79,7 +79,9 @@ export default function RepairProgress() {
               <div className={`step-body ${isActive ? 'active' : 'inactive'}`}>
                 <h3 className="step-title">{step.title}</h3>
                 <p className="step-detail">{step.detail}</p>
-                <p className="step-date">{formatDate(step.date)}</p>
+                {isActive && step.date && (
+                  <p className="step-date">{formatDate(step.date)}</p>
+                )}
               </div>
             </div>
           );
@@ -97,7 +99,7 @@ export default function RepairProgress() {
           {renderTimeline()}
         </div>
 
-        {/* WhatsApp Floating Button */}
+        
         <a
           href="https://wa.me/yourwhatsappphonenumber"
           className="whatsapp-button"
