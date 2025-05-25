@@ -133,6 +133,20 @@ const ProductDetails = () => {
                   <li key={index}>{spec}</li>
                 ))}
               </ul>
+
+
+              <a
+                href="https://wa.me/yourwhatsappphonenumber"
+                className="whatsapp-button"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img
+                  src="https://cdn-icons-png.flaticon.com/512/124/124034.png"
+                  alt="Chat on WhatsApp"
+                  className="whatsapp-icon"
+                />
+              </a>
             </div>
           )}
 
