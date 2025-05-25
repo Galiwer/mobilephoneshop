@@ -14,7 +14,19 @@ const getAuthHeaders = () => {
 
 export const getAllProducts = async () => {
   try {
-    const res = await fetch(`${BASE_URL}`);
+    // Try to get auth headers, but don't fail if they're not available
+    let headers = {};
+    try {
+      headers = getAuthHeaders();
+    } catch (e) {
+      // If no auth headers available, proceed without them
+      console.log('No auth headers available, proceeding as unauthenticated request');
+    }
+
+    const res = await fetch(`${BASE_URL}`, {
+      headers: headers
+    });
+    
     if (!res.ok) {
       const errorText = await res.text();
       try {
@@ -33,7 +45,19 @@ export const getAllProducts = async () => {
 
 export const getProductById = async (id) => {
   try {
-    const res = await fetch(`${BASE_URL}/${id}`);
+    // Try to get auth headers, but don't fail if they're not available
+    let headers = {};
+    try {
+      headers = getAuthHeaders();
+    } catch (e) {
+      // If no auth headers available, proceed without them
+      console.log('No auth headers available, proceeding as unauthenticated request');
+    }
+
+    const res = await fetch(`${BASE_URL}/${id}`, {
+      headers: headers
+    });
+    
     if (!res.ok) {
       const errorText = await res.text();
       try {
