@@ -87,7 +87,7 @@ function App() {
                         </ProtectedRoute>
                     } />
                     <Route path='/register' element={
-                        <ProtectedRoute requireAdmin={true}>
+                        <ProtectedRoute requireAdmin={false}>
                             <RegistrationPage />
                         </ProtectedRoute>
                     } />
