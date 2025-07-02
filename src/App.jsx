@@ -86,11 +86,7 @@ function App() {
                             <ProfilePage />
                         </ProtectedRoute>
                     } />
-                    <Route path='/register' element={
-                        <ProtectedRoute requireAdmin={false}>
-                            <RegistrationPage />
-                        </ProtectedRoute>
-                    } />
+                    <Route path='/register' element={<RegistrationPage />} />
                     <Route path='/admin/faq' element={
                         <ProtectedRoute requireAdmin={true}>
                             <AdminFAQList />
