@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { register, isAuthenticated, isAdmin } from '../../services/UserService';
 import './RegistrationPage.css';
@@ -15,19 +15,6 @@ function RegistrationPage() {
         role: 'USER',
         city: ''
     });
-
-    useEffect(() => {
-        // Check for admin access
-        if (!isAuthenticated()) {
-            navigate("/login");
-            return;
-        }
-
-        if (!isAdmin()) {
-            navigate("/");
-            return;
-        }
-    }, [navigate]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
